@@ -1,11 +1,31 @@
+import dayjs from 'dayjs';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 
-const printToFile = async (
-    title: string,
-    tableHeaders: string[],
-    tableBody: string[],
-) => {
+type Totals = {
+    title: string;
+    value: number;
+};
+
+type Dates = {
+    initialDate: string;
+    finalDate: string;
+};
+type PrintToFileType = {
+    title: string;
+    tableHeaders: string[];
+    tableBody: string[];
+    dates: Dates;
+    totals?: Totals[];
+};
+
+const printToFile = async ({
+    title,
+    tableHeaders,
+    tableBody,
+    dates,
+    totals,
+}: PrintToFileType) => {
     const html = `
 <html>
   <head>
@@ -16,15 +36,43 @@ const printToFile = async (
     	Agropecuaria Colindres, Boaco
     </h1>
     <h2> ${title} </h2>
+    <div>
+	<h3> Fechas </h3>
+	<p> <b>Desde:</b> ${dayjs(dates.initialDate).format('DD/MM/YYYY')} </p>
+	<p> <b>Hasta:</b> ${dayjs(dates.finalDate).format('DD/MM/YYYY')} </p>
+    </div>
     <table>
     	<tr>
 		${tableHeaders.map((header) => `<th>${header}</th>`).join('')}
 	</tr>
-	${tableBody.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`)}
+	${tableBody.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`).join('')}
     </table>
-    <img
-      src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
-      style="width: 90vw;" />
+
+    ${
+        totals?.length
+            ? `
+		<div>
+		<h3> Totales </h3>
+		<table>
+			<tr>
+				<th> Concepto </th>
+				<th> Total </th>
+			</tr>
+			${totals
+                .map(
+                    (total) => `
+				<tr>
+					<td> ${total.title} </td>
+					<td> ${total.value} </td>
+				</tr>
+			`,
+                )
+                .join('')}
+	</div>
+	    `
+            : []
+    }
+
   </body>
 </html>
 

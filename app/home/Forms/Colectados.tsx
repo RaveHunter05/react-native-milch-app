@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -20,6 +20,7 @@ export default function Transporte() {
         type: Yup.string().required(
             'Tipo de leche es requerido (litros, galones, etc)',
         ),
+        price: Yup.number().required('El precio de la leche es requerido'),
         driver_id: Yup.string().required('Productor es requerido'),
         route_id: Yup.string().required('Ruta es requerida'),
         producer_id: Yup.string().required('Productor es requerido'),
@@ -36,6 +37,7 @@ export default function Transporte() {
     const createMilkCollect = async ({
         quantity,
         type,
+        price,
         driver_id,
         route_id,
         producer_id,
@@ -45,6 +47,7 @@ export default function Transporte() {
                 await milkCollectApi.createMilkCollect({
                     quantity,
                     type,
+                    price,
                     driver_id,
                     route_id,
                     producer_id,
@@ -119,126 +122,136 @@ export default function Transporte() {
     return (
         <>
             <FlashMessage position="top" />
-            <View className="p-4">
+            <ScrollView className="p-4">
                 <Text className="mb-4 font-bold">Guardar colecta de leche</Text>
 
-                <View>
-                    <Formik
-                        initialValues={{
-                            driver_id: '0',
-                            route_id: '',
-                            producer_id: '',
-                            quantity: 0,
-                            type: 'litros',
-                        }}
-                        onSubmit={createMilkCollect}
-                        validationSchema={CollectablSchema}
-                    >
-                        {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit,
-                            values,
-                            errors,
-                            touched,
-                        }) => (
-                            <View className="mt-5 mx-5 w-72 space-y-4">
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Cantidad
+                <Formik
+                    initialValues={{
+                        quantity: 0,
+                        type: 'litros',
+                        price: 0,
+                        driver_id: '0',
+                        route_id: '',
+                        producer_id: '',
+                    }}
+                    onSubmit={createMilkCollect}
+                    validationSchema={CollectablSchema}
+                >
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                    }) => (
+                        <View className="mt-5 mx-5 w-72 space-y-4">
+                            <View>
+                                <Text className="text-gray-400 mb-2">
+                                    Cantidad
+                                </Text>
+                                <TextInput
+                                    placeholder="Ingresa la cantidad de leche a colectar"
+                                    className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                    onChangeText={handleChange('quantity')}
+                                    onBlur={handleBlur('quantity')}
+                                    value={values.quantity}
+                                />
+                                {errors.quantity && touched.quantity && (
+                                    <Text className="text-red-500 text-xs mt-1">
+                                        {errors.quantity}
                                     </Text>
-                                    <TextInput
-                                        placeholder="Ingresa la cantidad de leche a colectar"
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onChangeText={handleChange('quantity')}
-                                        onBlur={handleBlur('quantity')}
-                                        value={values.quantity}
-                                    />
-                                    {errors.quantity && touched.quantity && (
-                                        <Text className="text-red-500 text-xs mt-1">
-                                            {errors.quantity}
-                                        </Text>
-                                    )}
-                                </View>
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Tipo
+                                )}
+                            </View>
+                            <View>
+                                <Text className="text-gray-400 mb-2">Tipo</Text>
+                                <Picker
+                                    className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                    onValueChange={handleChange('type')}
+                                    onBlur={handleBlur('type')}
+                                    items={[
+                                        { label: 'Litro', value: 'litro' },
+                                        { label: 'Galón', value: 'galon' },
+                                    ]}
+                                    value={values.type}
+                                />
+                                {errors.type && touched.type && (
+                                    <Text className="text-red-500 text-xs mt-1">
+                                        {errors.type}
                                     </Text>
-                                    <Picker
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onValueChange={handleChange('type')}
-                                        onBlur={handleBlur('type')}
-                                        items={[
-                                            { label: 'Litro', value: 'litro' },
-                                            { label: 'Galón', value: 'galon' },
-                                        ]}
-                                        value={values.type}
-                                    />
-                                    {errors.type && touched.type && (
-                                        <Text className="text-red-500 text-xs mt-1">
-                                            {errors.type}
-                                        </Text>
-                                    )}
-                                </View>
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Seleccione un conductor
+                                )}
+                            </View>
+                            <View>
+                                <Text className="text-gray-400 mb-2">
+                                    Precio ($)
+                                </Text>
+                                <TextInput
+                                    placeholder="Ingresa el precio de la leche a colectar"
+                                    className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                    onChangeText={handleChange('price')}
+                                    onBlur={handleBlur('price')}
+                                    value={values.price}
+                                />
+                                {errors.quantity && touched.quantity && (
+                                    <Text className="text-red-500 text-xs mt-1">
+                                        {errors.quantity}
                                     </Text>
+                                )}
+                            </View>
 
-                                    <Picker
-                                        items={drivers}
-                                        value={values.driver_id}
-                                        onValueChange={handleChange(
-                                            'driver_id',
-                                        )}
-                                        onBlur={handleBlur('driver_id')}
-                                    />
-                                </View>
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Seleccione una ruta
-                                    </Text>
-                                    <Picker
-                                        items={routes}
-                                        value={values.route_id}
-                                        onValueChange={handleChange('route_id')}
-                                        onBlur={handleBlur('route_id')}
-                                    />
-                                </View>
-
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Seleccione un productor
-                                    </Text>
-                                    <Picker
-                                        items={producers}
-                                        value={values.producer_id}
-                                        onValueChange={handleChange(
-                                            'producer_id',
-                                        )}
-                                        onBlur={handleBlur('producer_id')}
-                                    />
-                                </View>
-
-                                <TouchableOpacity
-                                    className="bg-orange-300 p-3 mt-4"
-                                    onPress={handleSubmit}
-                                >
-                                    <Text className="text-center text-base text-white">
-                                        Guardar costo de transporte
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <Text className="mb-4 mt-4 font-bold">
-                                    Lista de Colectado:
+                            <View>
+                                <Text className="text-gray-400 mb-2">
+                                    Seleccione un conductor
                                 </Text>
 
-                                <MyTableComponent />
+                                <Picker
+                                    items={drivers}
+                                    value={values.driver_id}
+                                    onValueChange={handleChange('driver_id')}
+                                    onBlur={handleBlur('driver_id')}
+                                />
                             </View>
-                        )}
-                    </Formik>
-                </View>
-            </View>
+                            <View>
+                                <Text className="text-gray-400 mb-2">
+                                    Seleccione una ruta
+                                </Text>
+                                <Picker
+                                    items={routes}
+                                    value={values.route_id}
+                                    onValueChange={handleChange('route_id')}
+                                    onBlur={handleBlur('route_id')}
+                                />
+                            </View>
+
+                            <View>
+                                <Text className="text-gray-400 mb-2">
+                                    Seleccione un productor
+                                </Text>
+                                <Picker
+                                    items={producers}
+                                    value={values.producer_id}
+                                    onValueChange={handleChange('producer_id')}
+                                    onBlur={handleBlur('producer_id')}
+                                />
+                            </View>
+
+                            <TouchableOpacity
+                                className="bg-orange-300 p-3 mt-4"
+                                onPress={handleSubmit}
+                            >
+                                <Text className="text-center text-base text-white">
+                                    Guardar costo de transporte
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </Formik>
+
+                <Text className="mt-6 font-bold">Lista de Colectado:</Text>
+                <ScrollView className="mt-4 mb-5">
+                    <MyTableComponent />
+                </ScrollView>
+            </ScrollView>
         </>
     );
 }

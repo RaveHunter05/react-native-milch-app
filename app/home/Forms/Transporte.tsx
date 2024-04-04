@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -57,7 +57,7 @@ export default function Transporte() {
     return (
         <>
             <FlashMessage position="top" />
-            <View className="p-4">
+            <ScrollView className="p-4">
                 <Text className="mb-4 font-bold">
                     {' '}
                     Crear costo de transporte{' '}
@@ -142,17 +142,18 @@ export default function Transporte() {
                                         Guardar costo de transporte
                                     </Text>
                                 </TouchableOpacity>
-
-                                <Text className="mb-4 mt-4 font-bold">
-                                    Lista de Costos de Transporte:
-                                </Text>
-
-                                <MyTableComponent />
                             </View>
                         )}
                     </Formik>
+
+                    <Text className="mt-6 font-bold">
+                        Lista de Costos de Transporte:
+                    </Text>
+                    <ScrollView className="h-64 min-h-64 mt-4">
+                        <MyTableComponent />
+                    </ScrollView>
                 </View>
-            </View>
+            </ScrollView>
         </>
     );
 }

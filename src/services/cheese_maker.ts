@@ -4,29 +4,27 @@ import { getAxios, postAxios } from '../helpers/axiosHelper';
 import dayjs from 'dayjs';
 import { getToken } from '../helpers/secureStore';
 
-export type PaymentType = {
-    collected_milk_id: string;
-    deduction_id?: string;
-    transport_cost_id?: string;
-    total_amount: number;
+export type CheeseMakerType = {
+    name: string;
+    description: string;
+    phone: string;
+    id: number;
 };
 
 const token = getToken();
 
-const createPayment = async ({
-    collected_milk_id,
-    deduction_id,
-    transport_cost_id,
-    total_amount,
-}: PaymentType): Promise<AxiosResponse> => {
+const createCheeseMaker = async ({
+    name,
+    description,
+    phone
+}: CheeseMakerType): Promise<AxiosResponse> => {
     const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
-        '/payment',
+        '/cheese_maker',
         {
-            collected_milk_id,
-            deduction_id,
-            transport_cost_id,
-            total_amount,
+            name,
+            description,
+	    phone,
             date,
         },
         {
@@ -39,8 +37,8 @@ const createPayment = async ({
     return response;
 };
 
-const getPayments = async (): Promise<AxiosResponse> => {
-    const response: AxiosResponse = await getAxios('/payment', {
+const getCheeseMakers = async (): Promise<AxiosResponse> => {
+    const response: AxiosResponse = await getAxios('/cheese_maker', {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -49,7 +47,7 @@ const getPayments = async (): Promise<AxiosResponse> => {
     return response;
 };
 
-export const paymentApi = {
-    createPayment,
-    getPayments,
+export const cheeseMakersApi = {
+    createCheeseMaker,
+    getCheeseMakers
 };

@@ -1,5 +1,4 @@
-import { Stack, Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { Stack } from 'expo-router';
 
 export default function HomeLayout() {
     return (

@@ -8,30 +8,33 @@ export type MilkCollectType = {
     driver_id: string;
     route_id: string;
     producer_id: string;
+    price: number;
     quantity: number;
+    name: string;
     type: string;
-    id: string;
 };
 
 const token = getToken();
 
 const createMilkCollect = async ({
+    quantity,
+    type,
+    price,
     driver_id,
     route_id,
     producer_id,
-    quantity,
-    type,
 }: MilkCollectType): Promise<AxiosResponse> => {
     const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
         '/collected_milk',
         {
+            quantity,
+            type,
+            price,
             driver_id,
             route_id,
             producer_id,
-            quantity,
-            type,
-            date,
+	    date
         },
         {
             headers: {
