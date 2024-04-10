@@ -11,6 +11,14 @@ export type PaymentType = {
     total_amount: number;
 };
 
+export type MilkReportType = {
+    producer_id: string;
+    producer_name: string;
+    total_collected: number;
+    total_payment: number;
+    date: string;
+};
+
 const token = getToken();
 
 const createPayment = async ({
@@ -49,7 +57,21 @@ const getPayments = async (): Promise<AxiosResponse> => {
     return response;
 };
 
+const getLastPaymentsReport = async (): Promise<AxiosResponse> => {
+    const response: AxiosResponse = await getAxios(
+        '/reports/last-payments-report',
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+    return response;
+};
+
 export const paymentApi = {
     createPayment,
     getPayments,
+    getLastPaymentsReport,
 };

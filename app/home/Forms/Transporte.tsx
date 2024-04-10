@@ -55,11 +55,10 @@ export default function Transporte() {
         }
     };
     return (
-        <>
-            <FlashMessage position="top" />
+        <ScrollView style={{ backgroundColor: '#74B7FD' }}>
+            <FlashMessage style={{ position: 'fixed', top: 0 }} />
             <ScrollView className="p-4">
-                <Text className="mb-4 font-bold">
-                    {' '}
+                <Text className="mb-4 font-bold text-lg">
                     Crear costo de transporte{' '}
                 </Text>
 
@@ -77,9 +76,9 @@ export default function Transporte() {
                             errors,
                             touched,
                         }) => (
-                            <View className="mt-5 mx-5 w-72 space-y-4">
+                            <View className="mt-5 w-72 space-y-4">
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Nombre
                                     </Text>
                                     <TextInput
@@ -96,7 +95,7 @@ export default function Transporte() {
                                     )}
                                 </View>
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Descripción
                                     </Text>
                                     <TextInput
@@ -117,7 +116,7 @@ export default function Transporte() {
                                 </View>
 
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Costo
                                     </Text>
                                     <TextInput
@@ -135,10 +134,10 @@ export default function Transporte() {
                                 </View>
 
                                 <TouchableOpacity
-                                    className="bg-orange-300 p-3 mt-4"
+                                    className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm"
                                     onPress={handleSubmit}
                                 >
-                                    <Text className="text-center text-base text-white">
+                                    <Text className="text-center text-base font-bold">
                                         Guardar costo de transporte
                                     </Text>
                                 </TouchableOpacity>
@@ -146,14 +145,14 @@ export default function Transporte() {
                         )}
                     </Formik>
 
-                    <Text className="mt-6 font-bold">
+                    <Text className="mt-8 font-bold text-lg">
                         Lista de Costos de Transporte:
                     </Text>
-                    <ScrollView className="h-64 min-h-64 mt-4">
+                    <ScrollView className="mt-4">
                         <MyTableComponent />
                     </ScrollView>
                 </View>
             </ScrollView>
-        </>
+        </ScrollView>
     );
 }

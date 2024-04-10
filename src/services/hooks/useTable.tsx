@@ -45,7 +45,7 @@ export default function useTable<T>(
             );
         return (
             <>
-                <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
+                <Table borderStyle={{ borderWidth: 2, borderColor: 'black' }}>
                     <Row
                         data={tableHeaders}
                         textStyle={styles.headerText}
@@ -71,7 +71,12 @@ const styles = StyleSheet.create({
         paddingTop: 30,
         backgroundColor: '#fff',
     },
-    headerText: { textAlign: 'center', color: '#fff' },
+    headerText: {
+        textAlign: 'center',
+        color: '#000',
+        fontWeight: 'bold',
+        textTransform: 'capitalize',
+    },
     text: { textAlign: 'center', fontWeight: '100' },
     dataWrapper: { marginTop: -1 },
     row: { height: 40, backgroundColor: '#E7E6E1' },

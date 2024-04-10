@@ -1,60 +1,65 @@
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import MyCards from '~/components/shared/MyCards';
 
 export default function Registros() {
     return (
-        <>
-            <View className="p-4">
-                <Text className="mb-4 font-bold">
-                    Seleccione una de las siguientes opciones para registrar:
+        <ScrollView>
+            <View className="p-4 h-full" style={{ backgroundColor: '#74B7FD' }}>
+                <Text className="mb-4 font-bold text-lg">
+                    Elije el registro que deseas hacer
                 </Text>
 
-                <View className="flex flex-row flex-wrap justify-center mt-4">
+                <View className="flex flex-row flex-wrap mt-4 justify-center">
                     <MyCards
                         route="/home/Forms/Colectados"
-                        routeIcon="bottle-water"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/milch.png"
                     >
                         <Text>Colectado</Text>
                     </MyCards>
-                    <MyCards route="home/Forms/Pagos" routeIcon="money-check">
+                    <MyCards
+                        route="home/Forms/Pagos"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/payment.png"
+                    >
                         <Text>Pagos</Text>
                     </MyCards>
-                    <MyCards route="home/Forms/Productor" routeIcon="person">
+                    <MyCards
+                        route="home/Forms/Productor"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/producer.png"
+                    >
                         <Text>Productor</Text>
                     </MyCards>
-                    <MyCards route="home/Forms/Ruta" routeIcon="bus">
+                    <MyCards
+                        route="home/Forms/Ruta"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/route.png"
+                    >
                         <Text>Ruta</Text>
                     </MyCards>
                     <MyCards
                         route="home/Forms/Conductor"
-                        routeIcon="drivers-license"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/driver.png"
                     >
                         <Text>Conductor</Text>
                     </MyCards>
                     <MyCards
                         route="home/Forms/Deduction"
-                        routeIcon="money-bills"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/deduction.png"
                     >
                         <Text>Deducción</Text>
                     </MyCards>
                     <MyCards
-                        route="home/Forms/Transporte"
-                        routeIcon="money-bill-alt"
+                        route="home/Forms/Queso"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/cheese.png"
                     >
-                        <Text>Costo Transporte</Text>
-                    </MyCards>
-                    <MyCards route="home/Forms/Queso" routeIcon="cheese">
                         <Text>Queseros</Text>
                     </MyCards>
                     <MyCards
                         route="home/Forms/Venta"
-                        routeIcon="sell"
-                        iconType="MaterialIcons"
+                        imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/sell.png"
                     >
                         <Text>Venta de leche</Text>
                     </MyCards>
                 </View>
             </View>
-        </>
+        </ScrollView>
     );
 }

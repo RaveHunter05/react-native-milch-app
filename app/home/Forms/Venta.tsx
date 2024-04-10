@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +9,7 @@ import useTable from '~/services/hooks/useTable';
 import { MilkSelledType, milkSellApi } from '~/services/milk_sell';
 import { useEffect, useState } from 'react';
 import { cheeseMakersApi, CheeseMakerType } from '~/services/cheese_maker';
+import dayjs from 'dayjs';
 
 export default function Venta() {
     const TransportCostSchema = Yup.object().shape({
@@ -17,11 +18,13 @@ export default function Venta() {
         cheese_maker_id: Yup.string().required('Quesero es requerido'),
     });
 
-    const { MyTableComponent, setRefresh, refresh } = useTable<MilkSelledType>(
+    const { setRefresh, refresh } = useTable<MilkSelledType>(
         milkSellApi.getMilkSells,
     );
 
     const [cheeseMakers, setCheeseMakers] = useState([]);
+
+    const [milkSells, setMilkSells] = useState<MilkSelledType[]>([]);
 
     useEffect(() => {
         const fetchCheeseMakers = async () => {
@@ -37,6 +40,13 @@ export default function Venta() {
             );
             setCheeseMakers(formatedCheeseMakers);
         };
+
+        const fetchMilkSells = async () => {
+            const sells = await milkSellApi.getMilkSells();
+            setMilkSells(sells.data);
+        };
+
+        fetchMilkSells();
         fetchCheeseMakers();
     }, []);
 
@@ -72,10 +82,13 @@ export default function Venta() {
         }
     };
     return (
-        <>
-            <FlashMessage position="top" />
+        <ScrollView style={{ backgroundColor: '#74B7FD' }}>
+            <FlashMessage style={{ position: 'fixed', top: 0 }} />
             <ScrollView className="p-4">
-                <Text className="mb-4 font-bold"> Crear venta de leche</Text>
+                <Text className="mb-4 font-bold text-lg">
+                    {' '}
+                    Crear venta de leche
+                </Text>
 
                 <View>
                     <Formik
@@ -95,9 +108,9 @@ export default function Venta() {
                             errors,
                             touched,
                         }) => (
-                            <View className="mt-5 mx-5 w-72 space-y-4">
+                            <View className="mt-5 w-72 space-y-4">
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Cantidad
                                     </Text>
                                     <TextInput
@@ -114,7 +127,7 @@ export default function Venta() {
                                     )}
                                 </View>
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Precio (galón)
                                     </Text>
                                     <TextInput
@@ -131,7 +144,7 @@ export default function Venta() {
                                     )}
                                 </View>
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Quesero
                                     </Text>
                                     <Picker
@@ -145,10 +158,10 @@ export default function Venta() {
                                 </View>
 
                                 <TouchableOpacity
-                                    className="bg-orange-300 p-3 mt-4"
+                                    className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm"
                                     onPress={handleSubmit}
                                 >
-                                    <Text className="text-center text-base text-white">
+                                    <Text className="text-center text-base font-bold">
                                         Guardar venta de leche
                                     </Text>
                                 </TouchableOpacity>
@@ -156,14 +169,60 @@ export default function Venta() {
                         )}
                     </Formik>
 
-                    <Text className="mt-6 font-bold">
+                    <Text className="mt-8 font-bold text-lg">
                         Lista de Venta de leche:
                     </Text>
-                    <ScrollView className="h-64 min-h-64 mt-4">
-                        <MyTableComponent />
+                    <ScrollView>
+                        {milkSells.map((sell) => (
+                            <View
+                                className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
+                                style={{ borderRadius: 24 }}
+                            >
+                                <View className="flex mr-6">
+                                    <View
+                                        className="border py-3 bg-orange-300"
+                                        style={{ borderRadius: 24 }}
+                                    >
+                                        <Image
+                                            source={{
+                                                uri: 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/sell.png',
+                                            }}
+                                            style={{
+                                                width: 90,
+                                                height: 90,
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View className="">
+                                    <Text className="text-gray-500 text-xs mt-1">
+                                        {dayjs(sell.date).format('DD/MM/YYYY')}
+                                    </Text>
+
+                                    <View className="mt-4">
+                                        <Text className="text-gray-500">
+                                            {sell.quantity} Galones
+                                        </Text>
+                                        <Text className="text-lg font-bold">
+                                            {Number(sell.price).toLocaleString(
+                                                'es-NI',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'NIO',
+                                                },
+                                            )}{' '}
+                                        </Text>
+                                        <Text className="text-gray-500">
+                                            (precio unitario)
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
                     </ScrollView>
                 </View>
             </ScrollView>
-        </>
+        </ScrollView>
     );
 }

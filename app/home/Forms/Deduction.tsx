@@ -53,10 +53,13 @@ export default function Deduction() {
         }
     };
     return (
-        <>
-            <FlashMessage position="top" />
+        <ScrollView style={{ backgroundColor: '#74B7FD' }}>
+            <FlashMessage style={{ position: 'fixed', top: 0 }} />
             <ScrollView className="p-4">
-                <Text className="mb-4 font-bold"> Crear deducción </Text>
+                <Text className="mb-4 font-bold text-lg">
+                    {' '}
+                    Crear deducción{' '}
+                </Text>
 
                 <View>
                     <Formik
@@ -72,9 +75,9 @@ export default function Deduction() {
                             errors,
                             touched,
                         }) => (
-                            <View className="mt-5 mx-5 w-72 space-y-4">
+                            <View className="mt-5 w-72 space-y-4">
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Nombre
                                     </Text>
                                     <TextInput
@@ -91,7 +94,7 @@ export default function Deduction() {
                                     )}
                                 </View>
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Description
                                     </Text>
                                     <TextInput
@@ -111,7 +114,7 @@ export default function Deduction() {
                                         )}
                                 </View>
                                 <View>
-                                    <Text className="text-gray-400 mb-2">
+                                    <Text className="text-base mb-2">
                                         Precio
                                     </Text>
                                     <TextInput
@@ -129,10 +132,10 @@ export default function Deduction() {
                                 </View>
 
                                 <TouchableOpacity
-                                    className="bg-orange-300 p-3 mt-4"
+                                    className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm"
                                     onPress={handleSubmit}
                                 >
-                                    <Text className="text-center text-base text-white">
+                                    <Text className="text-center text-base font-bold">
                                         Guardar deducción
                                     </Text>
                                 </TouchableOpacity>
@@ -140,14 +143,14 @@ export default function Deduction() {
                         )}
                     </Formik>
 
-                    <Text className="mt-6 font-bold">
-                        Lista de Costos de Transporte:
+                    <Text className="mt-8 font-bold text-lg">
+                        Lista de deducciones:
                     </Text>
-                    <ScrollView className="h-64 min-h-64 mt-4">
+                    <ScrollView className="mt-4">
                         <MyTableComponent />
                     </ScrollView>
                 </View>
             </ScrollView>
-        </>
+        </ScrollView>
     );
 }

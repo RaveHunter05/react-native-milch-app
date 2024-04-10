@@ -114,6 +114,60 @@ const getSelledVSCollectedMilkReportByDate = async (
     return response;
 };
 
+const getCollectedMilkReportByRouteAndDate = async (
+    startDate: Date,
+    endDate: Date,
+): Promise<AxiosResponse> => {
+    const formatedStartDate = dayjs(startDate).format('YYYY-MM-DD');
+    const formatedEndDate = dayjs(endDate).format('YYYY-MM-DD');
+    const response: AxiosResponse = await getAxios(
+        `/reports/collected-milk-report-by-date-and-route?start_date=${formatedStartDate}&end_date=${formatedEndDate}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+    return response;
+};
+
+const getMilkSellsReportByCheeseMakerAndDate = async (
+    startDate: Date,
+    endDate: Date,
+): Promise<AxiosResponse> => {
+    const formatedStartDate = dayjs(startDate).format('YYYY-MM-DD');
+    const formatedEndDate = dayjs(endDate).format('YYYY-MM-DD');
+    const response: AxiosResponse = await getAxios(
+        `/reports/milk-sells-report-by-cheese-maker-and-date?start_date=${formatedStartDate}&end_date=${formatedEndDate}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+    return response;
+};
+
+const getPaymentReportByProducerAndDate = async (
+	startDate: Date,
+	endDate: Date,
+): Promise<AxiosResponse> => {
+	const formatedStartDate = dayjs(startDate).format('YYYY-MM-DD');
+	const formatedEndDate = dayjs(endDate).format('YYYY-MM-DD');
+	const response: AxiosResponse = await getAxios(
+		`/reports/payment-report-by-producer-and-date?start_date=${formatedStartDate}&end_date=${formatedEndDate}`,
+		{
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		},
+	);
+	return response;
+}
+
 export const reportsApi = {
     getCollectedReportByDate,
     getCollectedReportByProducerAndDate,
@@ -121,4 +175,7 @@ export const reportsApi = {
     getCollectedReportByRouteDriverAndDate,
     getSelledMilkReportByDate,
     getSelledVSCollectedMilkReportByDate,
+    getCollectedMilkReportByRouteAndDate,
+    getMilkSellsReportByCheeseMakerAndDate,
+    getPaymentReportByProducerAndDate
 };

@@ -52,100 +52,109 @@ export default function Colectados() {
     };
     return (
         <>
-            <FlashMessage position="top" />
-            <ScrollView className="p-4">
-                <Text className="mb-4 font-bold"> Crear productor </Text>
+            <FlashMessage style={{ position: 'fixed', top: 0 }} />
+            <ScrollView style={{ backgroundColor: '#74B7FD' }}>
+                <ScrollView className="p-4">
+                    <Text className="mb-4 font-bold text-lg">
+                        {' '}
+                        Crear productor{' '}
+                    </Text>
 
-                <View>
-                    <Formik
-                        initialValues={{ name: '', description: '', phone: '' }}
-                        onSubmit={createProducer}
-                        validationSchema={ProducerSchema}
-                    >
-                        {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit,
-                            values,
-                            errors,
-                            touched,
-                        }) => (
-                            <View className="mt-5 mx-5 w-72 space-y-4">
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Nombre
-                                    </Text>
-                                    <TextInput
-                                        placeholder="Ingresar nombre del productor"
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onChangeText={handleChange('name')}
-                                        onBlur={handleBlur('name')}
-                                        value={values.name}
-                                    />
-                                    {errors.name && touched.name && (
-                                        <Text className="text-red-500 text-xs mt-1">
-                                            {errors.name}
+                    <View>
+                        <Formik
+                            initialValues={{
+                                name: '',
+                                description: '',
+                                phone: '',
+                            }}
+                            onSubmit={createProducer}
+                            validationSchema={ProducerSchema}
+                        >
+                            {({
+                                handleChange,
+                                handleBlur,
+                                handleSubmit,
+                                values,
+                                errors,
+                                touched,
+                            }) => (
+                                <View className="mt-5 w-72 space-y-4">
+                                    <View>
+                                        <Text className="text-base mb-2">
+                                            Nombre
                                         </Text>
-                                    )}
-                                </View>
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Descripción
-                                    </Text>
-                                    <TextInput
-                                        placeholder="Ingresar descripción del productor"
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onChangeText={handleChange(
-                                            'description',
-                                        )}
-                                        onBlur={handleBlur('description')}
-                                        value={values.description}
-                                    />
-                                    {errors.description &&
-                                        touched.description && (
+                                        <TextInput
+                                            placeholder="Ingresar nombre del productor"
+                                            className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                            onChangeText={handleChange('name')}
+                                            onBlur={handleBlur('name')}
+                                            value={values.name}
+                                        />
+                                        {errors.name && touched.name && (
                                             <Text className="text-red-500 text-xs mt-1">
-                                                {errors.description}
+                                                {errors.name}
                                             </Text>
                                         )}
-                                </View>
-
-                                <View>
-                                    <Text className="text-gray-400 mb-2">
-                                        Teléfono
-                                    </Text>
-                                    <TextInput
-                                        placeholder="Ingresar teléfono del productor"
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onChangeText={handleChange('phone')}
-                                        onBlur={handleBlur('phone')}
-                                        value={values.phone}
-                                    />
-                                    {errors.phone && touched.phone && (
-                                        <Text className="text-red-500 text-xs mt-1">
-                                            {errors.phone}
+                                    </View>
+                                    <View>
+                                        <Text className="text-base mb-2">
+                                            Descripción
                                         </Text>
-                                    )}
+                                        <TextInput
+                                            placeholder="Ingresar descripción del productor"
+                                            className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                            onChangeText={handleChange(
+                                                'description',
+                                            )}
+                                            onBlur={handleBlur('description')}
+                                            value={values.description}
+                                        />
+                                        {errors.description &&
+                                            touched.description && (
+                                                <Text className="text-red-500 text-xs mt-1">
+                                                    {errors.description}
+                                                </Text>
+                                            )}
+                                    </View>
+
+                                    <View>
+                                        <Text className="text-base mb-2">
+                                            Teléfono
+                                        </Text>
+                                        <TextInput
+                                            placeholder="Ingresar teléfono del productor"
+                                            className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                            onChangeText={handleChange('phone')}
+                                            onBlur={handleBlur('phone')}
+                                            value={values.phone}
+                                        />
+                                        {errors.phone && touched.phone && (
+                                            <Text className="text-red-500 text-xs mt-1">
+                                                {errors.phone}
+                                            </Text>
+                                        )}
+                                    </View>
+
+                                    <TouchableOpacity
+                                        className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm"
+                                        onPress={handleSubmit}
+                                    >
+                                        <Text className="text-center text-base font-bold">
+                                            Guardar productor
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
+                            )}
+                        </Formik>
 
-                                <TouchableOpacity
-                                    className="bg-orange-300 p-3 mt-4"
-                                    onPress={handleSubmit}
-                                >
-                                    <Text className="text-center text-base text-white">
-                                        Guardar productor
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    </Formik>
-
-                    <Text className="mt-6 font-bold">
-                        Lista de Productores:
-                    </Text>
-                    <ScrollView className="h-64 min-h-64 mt-4">
-                        <MyTableComponent />
-                    </ScrollView>
-                </View>
+                        <Text className="mt-8 font-bold text-lg">
+                            Lista de Productores:
+                        </Text>
+                        <View className="mt-4">
+                            <MyTableComponent />
+                        </View>
+                    </View>
+                </ScrollView>
             </ScrollView>
         </>
     );

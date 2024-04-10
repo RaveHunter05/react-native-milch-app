@@ -31,17 +31,27 @@ const printToFile = async ({
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   </head>
-  <body style="text-align: center; padding: 2rem">
-    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-    	Agropecuaria Colindres, Boaco
-    </h1>
-    <h2> ${title} </h2>
+  <body style="text-align: left; padding: 2rem">
+  <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+	<section style="flex: 1;">
+		<h2 style=" font-family: Helvetica Neue; font-weight: bold;">
+		Compra y venta de leche Colindres
+		</h2>
+		<h3> <bold> Tel: </bold> 84964176 </h3>
+		<h3> ${title} </h3>
+	</section>
+	<section style="flex: 1; display: flex; align-items: center; justify-content: center;">
+		<img src="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/milch.png" alt="Logo" style="width: 140px; height: 140px;">
+	</section>
+    <section style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: start;">
     <div>
 	<h3> Fechas </h3>
 	<p> <b>Desde:</b> ${dayjs(dates.initialDate).format('DD/MM/YYYY')} </p>
 	<p> <b>Hasta:</b> ${dayjs(dates.finalDate).format('DD/MM/YYYY')} </p>
     </div>
-    <table>
+    </section>
+  </div>
+    <table style="margin-top: 2rem;">
     	<tr>
 		${tableHeaders.map((header) => `<th>${header}</th>`).join('')}
 	</tr>
@@ -85,7 +95,7 @@ table {
 }
 
 table td, table th {
-  border: 1px solid #ddd;
+  border: 1px solid #000;
   padding: 8px;
   text-align: center;
 }
@@ -98,8 +108,8 @@ table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #04AA6D;
-  color: white;
+  background-color: #74B7FD;
+  color: #000;
   text-align: center;
 }
 </style>

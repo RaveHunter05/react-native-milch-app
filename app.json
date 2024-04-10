@@ -1,45 +1,39 @@
 {
-  "expo": {
-    "name": "rosita",
-    "slug": "rosita",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.ravehunter05.rosita"
-    },
-    "web": {
-      "favicon": "./assets/images/favicon.png"
-    },
-    "scheme": "rosita",
-    "plugins": [
-      "expo-font",
-      "expo-secure-store",
-      "expo-router"
-    ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "98ae42f8-d928-48ce-95f4-a7a045844f33"
-      }
+    "expo": {
+        "name": "milch",
+        "slug": "rosita",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/images/milch.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/images/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/images/milch.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.ravehunter05.milch"
+        },
+        "web": {
+            "favicon": "./assets/images/milch.png"
+        },
+        "scheme": "milch",
+        "plugins": ["expo-font", "expo-secure-store", "expo-router"],
+        "extra": {
+            "router": {
+                "origin": false
+            },
+            "eas": {
+                "projectId": "98ae42f8-d928-48ce-95f4-a7a045844f33"
+            }
+        }
     }
-  }
 }

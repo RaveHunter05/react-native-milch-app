@@ -1,4 +1,4 @@
-import { Text, View, Modal, Pressable } from 'react-native';
+import { Text, View, Modal, Pressable, ScrollView } from 'react-native';
 
 import { useState } from 'react';
 import MyReport from '~/components/shared/MyReport';
@@ -11,6 +11,7 @@ import { reportsApi } from '~/services/reports';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import printToFile from '~/utils/toPDF';
 import dayjs from 'dayjs';
+import multipleItemsPrintToFile from '~/utils/multipleItemsPDF';
 
 export default function Reportes() {
     const {
@@ -57,7 +58,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Acopio de leche por productor';
+            const title = 'Resumen de acopio de leche por productor';
             const tableHeaders = [
                 'ID',
                 'Productor',
@@ -105,7 +106,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Acopio de leche por día';
+            const title = 'Resumen de leche acopiada por fecha';
             const tableHeaders = [
                 'Fecha',
                 'Día',
@@ -196,7 +197,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Acopio de leche por ruta';
+            const title = 'Resumen de acopio de leche por ruta';
             const tableHeaders = [
                 'ID',
                 'Nombre de Ruta',
@@ -293,7 +294,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Reporte de leche vendida por fecha';
+            const title = 'Resumen de leche vendida por fecha';
             const tableHeaders = [
                 'Fecha',
                 'Día',
@@ -383,7 +384,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Comparativos de venta y acopio de leche';
+            const title = 'Resumen de comparativos de venta y acopio de leche';
             const tableHeaders = [
                 'Fecha',
                 'Día de semana',
@@ -399,6 +400,7 @@ export default function Reportes() {
             const totalTitles = [
                 'Total de leche comprada (C$)',
                 'Total de leche vendida (C$)',
+                'Diferencia (C$)',
             ];
 
             const totalValues = [
@@ -408,6 +410,13 @@ export default function Reportes() {
                 ),
                 response.data.reduce(
                     (acc, curr) => acc + Number(curr.total_price_selled),
+                    0,
+                ),
+                response.data.reduce(
+                    (acc, curr) =>
+                        acc +
+                        Number(curr.total_price_selled) -
+                        Number(curr.total_price_collected),
                     0,
                 ),
             ];
@@ -457,20 +466,299 @@ export default function Reportes() {
         }
     };
 
+    const handlePaymentByProducer = async () => {
+        if (initialDate > finalDate) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La fecha inicial no puede ser mayor a la fecha final',
+                type: 'danger',
+            });
+            return;
+        }
+
+        try {
+            const response: AxiosResponse =
+                await reportsApi.getPaymentReportByProducerAndDate(
+                    initialDate,
+                    finalDate,
+                );
+            if (!response.data.length) {
+                showMessage({
+                    message: 'Error',
+                    description: 'No hay datos para mostrar',
+                    type: 'danger',
+                });
+                return;
+            }
+
+            const title = 'Reporte de pagos por fecha';
+            const tableHeaders = [
+                'Fecha',
+                'Día de semana',
+                'Productor',
+                'Total pago (C$)',
+                'Leche colectada (galones)',
+                'Leche vendida (C$)',
+                'Total deducción',
+            ];
+            const tableBody = [];
+
+            for (const producer of response.data) {
+                const formatedElements = [];
+                for (const value of producer) {
+                    value.date = dayjs(value.date).format('DD/MM/YYYY');
+                    switch (value.day_of_week) {
+                        case 'Monday':
+                            value.day_of_week = 'Lunes';
+                            break;
+                        case 'Tuesday':
+                            value.day_of_week = 'Martes';
+                            break;
+                        case 'Wednesday':
+                            value.day_of_week = 'Miércoles';
+                            break;
+                        case 'Thursday':
+                            value.day_of_week = 'Jueves';
+                            break;
+                        case 'Friday':
+                            value.day_of_week = 'Viernes';
+                            break;
+                        case 'Saturday':
+                            value.day_of_week = 'Sábado';
+                            break;
+                        case 'Sunday':
+                            value.day_of_week = 'Domingo';
+                            break;
+                        default:
+                            break;
+                    }
+                    formatedElements.push(Array.from(Object.values(value)));
+                }
+                let total = producer.reduce(
+                    (acc, curr) => acc + Number(curr.total_payment),
+                    0,
+                );
+                formatedElements.push(total);
+                tableBody.push(formatedElements);
+            }
+
+            const totalTitle = 'Total de pagos (C$)';
+
+            const dates = { initialDate, finalDate };
+
+            multipleItemsPrintToFile({
+                title,
+                tableHeaders,
+                tableBody,
+                dates,
+                totalTitle,
+            });
+
+            console.log({ tableHeaders, tableBody });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleCollectedMilkReportByRouteAndDate = async () => {
+        if (initialDate > finalDate) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La fecha inicial no puede ser mayor a la fecha final',
+                type: 'danger',
+            });
+            return;
+        }
+
+        try {
+            const response: AxiosResponse =
+                await reportsApi.getCollectedMilkReportByRouteAndDate(
+                    initialDate,
+                    finalDate,
+                );
+            if (!response.data.length) {
+                showMessage({
+                    message: 'Error',
+                    description: 'No hay datos para mostrar',
+                    type: 'danger',
+                });
+                return;
+            }
+
+            const title = 'Reporte de pagos por fecha';
+            const tableHeaders = [
+                'Fecha',
+                'Día de semana',
+                'Nombre de ruta',
+                'Leche colectada (galones)',
+                'Leche comprada (C$)',
+            ];
+            const tableBody = [];
+
+            for (const route of response.data) {
+                const formatedElements = [];
+                for (const value of route) {
+                    value.date = dayjs(value.date).format('DD/MM/YYYY');
+                    switch (value.day_of_week) {
+                        case 'Monday':
+                            value.day_of_week = 'Lunes';
+                            break;
+                        case 'Tuesday':
+                            value.day_of_week = 'Martes';
+                            break;
+                        case 'Wednesday':
+                            value.day_of_week = 'Miércoles';
+                            break;
+                        case 'Thursday':
+                            value.day_of_week = 'Jueves';
+                            break;
+                        case 'Friday':
+                            value.day_of_week = 'Viernes';
+                            break;
+                        case 'Saturday':
+                            value.day_of_week = 'Sábado';
+                            break;
+                        case 'Sunday':
+                            value.day_of_week = 'Domingo';
+                            break;
+                        default:
+                            break;
+                    }
+                    formatedElements.push(Array.from(Object.values(value)));
+                }
+                let total = route.reduce(
+                    (acc, curr) => acc + Number(curr.total_price_collected),
+                    0,
+                );
+                formatedElements.push(total);
+                tableBody.push(formatedElements);
+            }
+
+            const totalTitle = 'Total de pagos (C$)';
+
+            const dates = { initialDate, finalDate };
+
+            multipleItemsPrintToFile({
+                title,
+                tableHeaders,
+                tableBody,
+                dates,
+                totalTitle,
+            });
+
+            console.log({ tableHeaders, tableBody });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleMilkSellsReportByCheeseMakerAndDate = async () => {
+        if (initialDate > finalDate) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La fecha inicial no puede ser mayor a la fecha final',
+                type: 'danger',
+            });
+            return;
+        }
+
+        try {
+            const response: AxiosResponse =
+                await reportsApi.getMilkSellsReportByCheeseMakerAndDate(
+                    initialDate,
+                    finalDate,
+                );
+            if (!response.data.length) {
+                showMessage({
+                    message: 'Error',
+                    description: 'No hay datos para mostrar',
+                    type: 'danger',
+                });
+                return;
+            }
+
+            const title = 'Reporte de ventas por quesero';
+            const tableHeaders = [
+                'Fecha',
+                'Día de semana',
+                'Nombre de quesero',
+                'Leche vendida (galones)',
+                'Leche vendida (C$)',
+            ];
+            const tableBody = [];
+
+            for (const cheeseMaker of response.data) {
+                const formatedElements = [];
+                for (const value of cheeseMaker) {
+                    value.date = dayjs(value.date).format('DD/MM/YYYY');
+                    switch (value.day_of_week) {
+                        case 'Monday':
+                            value.day_of_week = 'Lunes';
+                            break;
+                        case 'Tuesday':
+                            value.day_of_week = 'Martes';
+                            break;
+                        case 'Wednesday':
+                            value.day_of_week = 'Miércoles';
+                            break;
+                        case 'Thursday':
+                            value.day_of_week = 'Jueves';
+                            break;
+                        case 'Friday':
+                            value.day_of_week = 'Viernes';
+                            break;
+                        case 'Saturday':
+                            value.day_of_week = 'Sábado';
+                            break;
+                        case 'Sunday':
+                            value.day_of_week = 'Domingo';
+                            break;
+                        default:
+                            break;
+                    }
+                    formatedElements.push(Array.from(Object.values(value)));
+                }
+                let total = cheeseMaker.reduce(
+                    (acc, curr) => acc + Number(curr.total_price_selled),
+                    0,
+                );
+                formatedElements.push(total);
+                tableBody.push(formatedElements);
+            }
+
+            const totalTitle = 'Total de leche vendida (C$)';
+
+            const dates = { initialDate, finalDate };
+
+            multipleItemsPrintToFile({
+                title,
+                tableHeaders,
+                tableBody,
+                dates,
+                totalTitle,
+            });
+
+            console.log({ tableHeaders, tableBody });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <>
-            <View>
-                <FlashMessage position="top" />
-                <View className="p-4 space-y-4">
-                    <Text className="font-bold">
+            <FlashMessage position="top" />
+            <ScrollView className="bg-sky-300">
+                <ScrollView className="p-4 space-y-4">
+                    <Text className="mb-4 font-bold text-lg">
                         Seleccione fecha inicial y fecha final para generar el
                         reporte
                     </Text>
 
                     <View>
-                        <Text className="mb-2 text-gray-500">
-                            Fecha inicial
-                        </Text>
+                        <Text className="mb-2 text-base">Fecha inicial</Text>
 
                         <Pressable onPress={switchModalVisibilityInitialDate}>
                             <TextInput
@@ -482,7 +770,7 @@ export default function Reportes() {
                         <InitialDatePickerComponent />
                     </View>
                     <View>
-                        <Text className="mb-2 text-gray-500">Fecha Final</Text>
+                        <Text className="mb-2 text-base">Fecha Final</Text>
 
                         <Pressable onPress={switchModalVisibilityFinalDate}>
                             <TextInput
@@ -493,18 +781,11 @@ export default function Reportes() {
 
                         <FinalDatePickerComponent />
                     </View>
-                    <Text className="font-bold">
-                        Seleccione una opción para generar el reporte:
-                    </Text>
 
-                    <View>
-                        <Pressable
-                            onPress={handleCollectedReportByRouteDriverAndDate}
-                        >
-                            <MyReport>
-                                Acopio de leche por ruta y conductor{' '}
-                            </MyReport>
-                        </Pressable>
+                    <ScrollView>
+                        <Text className="mb-4 font-bold text-lg mt-8">
+                            Seleccione una opción para generar el reportes:
+                        </Text>
                         {/* collected milk by route, driver and date */}
                         <Pressable onPress={handleCollectedMilkByRouteAndDate}>
                             <MyReport>
@@ -515,28 +796,44 @@ export default function Reportes() {
                         <Pressable
                             onPress={handleCollectedMilkByProducerAndDate}
                         >
-                            <MyReport>Acopio de leche por productor</MyReport>
+                            <MyReport>
+                                Resumen de acopio de leche por productor
+                            </MyReport>
                         </Pressable>
                         <Pressable onPress={handleSelledMilkReportByDate}>
                             <MyReport>
-                                Reporte de leche vendida por fecha
+                                Resumen de leche vendida por fecha
                             </MyReport>
                         </Pressable>
                         <Pressable onPress={handleCollectedMilkReportByDay}>
                             <MyReport>
-                                Reporte de leche acopiada por fecha
+                                Resumen de leche acopiada por fecha
                             </MyReport>
                         </Pressable>
                         <Pressable
                             onPress={handleSelledVSCollectedMilkReportByDate}
                         >
                             <MyReport>
-                                Comparativos de venta y acopio de leche
+                                Resumen de comparativos de venta y acopio de
+                                leche
                             </MyReport>
                         </Pressable>
-                    </View>
-                </View>
-            </View>
+                        <Pressable onPress={handlePaymentByProducer}>
+                            <MyReport>Reporte de pagos por productor</MyReport>
+                        </Pressable>
+                        <Pressable
+                            onPress={handleCollectedMilkReportByRouteAndDate}
+                        >
+                            <MyReport>Reporte de recolectado por ruta</MyReport>
+                        </Pressable>
+                        <Pressable
+                            onPress={handleMilkSellsReportByCheeseMakerAndDate}
+                        >
+                            <MyReport>Reporte de ventas por quesero</MyReport>
+                        </Pressable>
+                    </ScrollView>
+                </ScrollView>
+            </ScrollView>
         </>
     );
 }

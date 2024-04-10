@@ -8,6 +8,7 @@ export type MilkSelledType = {
     quantity: number;
     price: number;
     cheese_maker_id: string;
+    date: string;
 };
 
 const token = getToken();

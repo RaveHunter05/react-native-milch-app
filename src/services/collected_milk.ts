@@ -12,11 +12,13 @@ export type MilkCollectType = {
     quantity: number;
     name: string;
     type: string;
+    date: string;
 };
 
 const token = getToken();
 
 const createMilkCollect = async ({
+    name,
     quantity,
     type,
     price,
@@ -28,13 +30,14 @@ const createMilkCollect = async ({
     const response: AxiosResponse = await postAxios(
         '/collected_milk',
         {
+            name,
             quantity,
             type,
             price,
             driver_id,
             route_id,
             producer_id,
-	    date
+            date,
         },
         {
             headers: {

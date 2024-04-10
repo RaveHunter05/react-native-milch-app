@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { TextInput } from 'react-native-rapi-ui';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { RegisterType, authApi } from '@/services/auth';
@@ -54,9 +53,12 @@ export default function Register() {
     return (
         <>
             <FlashMessage position="top" />
-            <View className="flex-1 justify-center items-center bg-white">
+            <View
+                className="flex-1 justify-center items-center bg-white"
+                style={{ backgroundColor: '#74B7FD' }}
+            >
                 <StatusBar style="auto" />
-                <Text className="text-center mt-3 text-2xl font-light text-orange-300">
+                <Text className="font-extrabold mt-3 text-3xl text-white">
                     Registrarse
                 </Text>
                 {/* Additional components goes here */}
@@ -80,12 +82,10 @@ export default function Register() {
                     }) => (
                         <View className="mt-5 mx-5 w-72">
                             <View>
-                                <Text className="text-gray-400 mb-2">
-                                    Email:
-                                </Text>
+                                <Text className="text-base mb-2">Email:</Text>
                                 <TextInput
                                     placeholder="Ingresar email..."
-                                    className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                    className="border-black bg-white px-5 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm hover:border-b-2 hover:border-r-2"
                                     onChangeText={handleChange('email')}
                                     onBlur={handleBlur('email')}
                                     value={values.email}
@@ -96,13 +96,13 @@ export default function Register() {
                                     </Text>
                                 )}
                             </View>
-                            <View>
-                                <Text className="text-gray-400 mb-2">
+                            <View className="mt-3">
+                                <Text className="text-base mb-2">
                                     Nombre de usuario:
                                 </Text>
                                 <TextInput
                                     placeholder="Ingresar nombre de usuario..."
-                                    className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
+                                    className="border-black bg-white px-5 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm hover:border-b-2 hover:border-r-2"
                                     onChangeText={handleChange('username')}
                                     onBlur={handleBlur('username')}
                                     value={values.username}
@@ -114,13 +114,13 @@ export default function Register() {
                                 )}
                             </View>
                             <View className="mt-3">
-                                <Text className="text-gray-400 mb-2">
+                                <Text className="text-base mb-2">
                                     Contraseña:
                                 </Text>
                                 <TextInput
                                     secureTextEntry
                                     placeholder="Ingresar contraseña..."
-                                    className="border text-gray-500 border-dotted p-2 border-amber-400 mt-1"
+                                    className="border-black bg-white px-5 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm hover:border-b-2 hover:border-r-2"
                                     onChangeText={handleChange('password')}
                                     onBlur={handleBlur('password')}
                                     value={values.password}
@@ -134,13 +134,13 @@ export default function Register() {
                             )}
 
                             <View className="mt-3">
-                                <Text className="text-gray-400 mb-2">
+                                <Text className="text-base mb-2">
                                     Confirmar contraseña:
                                 </Text>
                                 <TextInput
                                     secureTextEntry
                                     placeholder="Repetir contraseña..."
-                                    className="border text-gray-500 border-dotted p-2 border-amber-400 mt-1"
+                                    className="border-black bg-white px-5 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm hover:border-b-2 hover:border-r-2"
                                     onChangeText={handleChange(
                                         'passwordConfirmation',
                                     )}
@@ -157,20 +157,20 @@ export default function Register() {
                                 )}
 
                             <TouchableOpacity
-                                className="bg-orange-300 p-3 mt-4"
+                                className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm mt-4"
                                 onPress={handleSubmit}
                             >
-                                <Text className="text-center text-base text-white">
+                                <Text className="text-center text-base font-bold">
                                     Register
                                 </Text>
                             </TouchableOpacity>
 
-                            <Text className="mt-4 text-gray-400">
+                            <Text className="mt-4 text-base">
                                 ¿Tienes una cuenta?
                                 <TouchableOpacity
                                     onPress={() => router.replace('/Login')}
                                 >
-                                    <Text className="text-orange-300">
+                                    <Text className="text-base text-white">
                                         Logueate
                                     </Text>
                                 </TouchableOpacity>

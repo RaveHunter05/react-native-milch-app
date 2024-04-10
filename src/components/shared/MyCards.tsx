@@ -1,53 +1,43 @@
 import { FontAwesome6, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 type MyCardsProps = {
     children: React.ReactNode;
     route: string;
-    routeIcon?: any;
-    iconType?: string;
+    imageURI?: string;
 };
 
 export default function MyCards({
     children,
     route,
-    routeIcon,
-    iconType = 'FontAwesome6',
+    imageURI = 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/milch.png',
 }: MyCardsProps) {
     const changeRoute = () => {
         router.push(route);
     };
     return (
         <>
-            <View className="bg-orange-300 text-white p-2 border-white border-2 rounded w-40">
+            <View
+                className="bg-white px-3 py-5 border-2 w-28 mr-3 mb-8"
+                style={{ borderRadius: 12 }}
+            >
                 <TouchableOpacity
                     onPress={changeRoute}
                     className="flex flex-column items-center"
                 >
-                    {iconType === 'FontAwesome6' && (
-                        <FontAwesome6
-                            name={routeIcon || 'home'}
-                            size={24}
-                            color="white"
-                        />
-                    )}
-                    {iconType === 'FontAwesome5' && (
-                        <FontAwesome5
-                            name={routeIcon || 'home'}
-                            size={24}
-                            color="white"
-                        />
-                    )}
-
-                    {iconType === 'MaterialIcons' && (
-                        <MaterialIcons
-                            name={routeIcon || 'home'}
-                            size={24}
-                            color="white"
-                        />
-                    )}
-                    <Text className="text-white text-center">{children}</Text>
+                    <Image
+                        source={{
+                            uri: imageURI,
+                        }}
+                        style={{ width: 70, height: 70 }}
+                    />
+                    <Text
+                        className="text-center font-bold mt-4"
+                        style={{ fontSize: 16 }}
+                    >
+                        {children}
+                    </Text>
                 </TouchableOpacity>
             </View>
         </>

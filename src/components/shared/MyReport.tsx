@@ -7,8 +7,13 @@ type MyReportProps = {
 export default function MyReport({ children }: MyReportProps) {
     return (
         <>
-            <View className="bg-orange-300 p-2 border-white border-2 rounded">
-                <Text className="text-white text-center">{children}</Text>
+            <View className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm mb-3">
+                <Text
+                    className="font-bold text-center"
+                    style={{ fontSize: 16 }}
+                >
+                    {children}
+                </Text>
             </View>
         </>
     );
