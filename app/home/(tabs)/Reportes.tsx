@@ -1,8 +1,6 @@
 import { Text, View, Modal, Pressable, ScrollView } from 'react-native';
 
-import { useState } from 'react';
 import MyReport from '~/components/shared/MyReport';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
 import useDateTimePicker from '~/services/hooks/useDateTimePicker';
 import { TextInput } from 'react-native-rapi-ui';
 import formatDateString from '~/utils/formatDateString';
@@ -492,15 +490,15 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Reporte de pagos por fecha';
+            const title = 'Reporte de pagos a productor por fecha';
             const tableHeaders = [
                 'Fecha',
                 'Día de semana',
                 'Productor',
-                'Total pago (C$)',
                 'Leche colectada (galones)',
-                'Leche vendida (C$)',
+                'Pago bruto leche (C$)',
                 'Total deducción',
+                'Pago neto leche (C$)',
             ];
             const tableBody = [];
 
@@ -535,15 +533,33 @@ export default function Reportes() {
                     }
                     formatedElements.push(Array.from(Object.values(value)));
                 }
-                let total = producer.reduce(
+
+                let grossTotal = producer.reduce(
+                    (acc, curr) => acc + Number(curr.total_price_collected),
+                    0,
+                );
+
+                let deductionTotal = producer.reduce(
+                    (acc, curr) => acc + Number(curr.total_deduction),
+                    0,
+                );
+
+                let netTotal = producer.reduce(
                     (acc, curr) => acc + Number(curr.total_payment),
                     0,
                 );
-                formatedElements.push(total);
+
+                const totals = [
+                    { title: 'Total pago bruto (C$)', value: grossTotal },
+                    {
+                        title: 'Total deducciones (C$)',
+                        value: deductionTotal,
+                    },
+                    { title: 'Total pago neto (C$)', value: netTotal },
+                ];
+                formatedElements.push(totals);
                 tableBody.push(formatedElements);
             }
-
-            const totalTitle = 'Total de pagos (C$)';
 
             const dates = { initialDate, finalDate };
 
@@ -552,7 +568,6 @@ export default function Reportes() {
                 tableHeaders,
                 tableBody,
                 dates,
-                totalTitle,
             });
 
             console.log({ tableHeaders, tableBody });
@@ -561,6 +576,7 @@ export default function Reportes() {
         }
     };
 
+    // Reporte de pagos por fecha
     const handleCollectedMilkReportByRouteAndDate = async () => {
         if (initialDate > finalDate) {
             showMessage({
@@ -628,15 +644,20 @@ export default function Reportes() {
                     }
                     formatedElements.push(Array.from(Object.values(value)));
                 }
-                let total = route.reduce(
+                let totalCollected = route.reduce(
                     (acc, curr) => acc + Number(curr.total_price_collected),
                     0,
                 );
-                formatedElements.push(total);
+
+                const totals = [
+                    {
+                        title: 'Total leche comprada (C$)',
+                        value: totalCollected,
+                    },
+                ];
+                formatedElements.push(totals);
                 tableBody.push(formatedElements);
             }
-
-            const totalTitle = 'Total de pagos (C$)';
 
             const dates = { initialDate, finalDate };
 
@@ -645,7 +666,6 @@ export default function Reportes() {
                 tableHeaders,
                 tableBody,
                 dates,
-                totalTitle,
             });
 
             console.log({ tableHeaders, tableBody });
@@ -654,6 +674,7 @@ export default function Reportes() {
         }
     };
 
+    // Reporte de ventas por quesero
     const handleMilkSellsReportByCheeseMakerAndDate = async () => {
         if (initialDate > finalDate) {
             showMessage({
@@ -725,11 +746,13 @@ export default function Reportes() {
                     (acc, curr) => acc + Number(curr.total_price_selled),
                     0,
                 );
-                formatedElements.push(total);
+
+                const totals = [
+                    { title: 'Total de leche vendida (C$)', value: total },
+                ];
+                formatedElements.push(totals);
                 tableBody.push(formatedElements);
             }
-
-            const totalTitle = 'Total de leche vendida (C$)';
 
             const dates = { initialDate, finalDate };
 
@@ -738,7 +761,6 @@ export default function Reportes() {
                 tableHeaders,
                 tableBody,
                 dates,
-                totalTitle,
             });
 
             console.log({ tableHeaders, tableBody });
@@ -789,7 +811,7 @@ export default function Reportes() {
                         {/* collected milk by route, driver and date */}
                         <Pressable onPress={handleCollectedMilkByRouteAndDate}>
                             <MyReport>
-                                Resumen de acopio de leche por ruta
+                                Resumen de acopio de leche por ruta (interno)
                             </MyReport>
                         </Pressable>
                         {/* collected milk by producer and date */}
@@ -798,16 +820,17 @@ export default function Reportes() {
                         >
                             <MyReport>
                                 Resumen de acopio de leche por productor
+                                (interno)
                             </MyReport>
                         </Pressable>
                         <Pressable onPress={handleSelledMilkReportByDate}>
                             <MyReport>
-                                Resumen de leche vendida por fecha
+                                Resumen de leche vendida por fecha (interno)
                             </MyReport>
                         </Pressable>
                         <Pressable onPress={handleCollectedMilkReportByDay}>
                             <MyReport>
-                                Resumen de leche acopiada por fecha
+                                Resumen de leche acopiada por fecha (interno)
                             </MyReport>
                         </Pressable>
                         <Pressable
@@ -815,7 +838,7 @@ export default function Reportes() {
                         >
                             <MyReport>
                                 Resumen de comparativos de venta y acopio de
-                                leche
+                                leche (interno)
                             </MyReport>
                         </Pressable>
                         <Pressable onPress={handlePaymentByProducer}>
@@ -824,7 +847,9 @@ export default function Reportes() {
                         <Pressable
                             onPress={handleCollectedMilkReportByRouteAndDate}
                         >
-                            <MyReport>Reporte de recolectado por ruta</MyReport>
+                            <MyReport>
+                                Reporte de leche recolectada por ruta
+                            </MyReport>
                         </Pressable>
                         <Pressable
                             onPress={handleMilkSellsReportByCheeseMakerAndDate}

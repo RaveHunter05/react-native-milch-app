@@ -4,7 +4,6 @@ import { Modal, View } from 'react-native';
 import RNDateTimePicker, {
     DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import { Button } from 'react-native-rapi-ui';
 
 type DateTimePickerType = {
     mode: 'date' | 'time' | 'datetime';
@@ -40,6 +39,7 @@ export default function useDateTimePicker<T>({
                         display="default"
                         onChange={onChange}
                         maximumDate={new Date()}
+                        style={{ width: 320, backgroundColor: 'white' }}
                     />
                 </Modal>
             </View>

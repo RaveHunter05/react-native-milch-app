@@ -2,11 +2,6 @@ import dayjs from 'dayjs';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 
-type Totals = {
-    title: string;
-    value: number;
-};
-
 type Dates = {
     initialDate: string;
     finalDate: string;
@@ -15,16 +10,14 @@ type PrintToFileType = {
     title: string;
     tableHeaders: string[];
     tableBody: string[];
-    dates: Dates;
-    totalTitle: string;
+    dates?: Dates;
 };
 
 type PrintToFileTypeMultiple = {
     title: string;
     tableHeaders: string[];
     tableBody: string[][];
-    dates: Dates;
-    totalTitle: string;
+    dates?: Dates;
 };
 
 const initialHTML = `
@@ -42,7 +35,6 @@ const generateHTML = async ({
     tableHeaders,
     tableBody,
     dates,
-    totalTitle,
 }: PrintToFileType) => {
     const html = `
     <section style="height: 50vh;">
@@ -79,15 +71,24 @@ const generateHTML = async ({
         )
         .join('')}
     </table>
-    <div style="display: flex; text-align: end;">
-    	<p style="text-width: bold;">${totalTitle} : </p>
-	<p style="margin-left: 2px;"> ${Number(
-        tableBody[tableBody.length - 1],
-    ).toLocaleString('es-NI', {
-        style: 'currency',
-        currency: 'NIO',
-    })} </p>
+
+    <div style="margin-top: 1rem; display: flex; flex-wrap: wrap;">
+	${tableBody[tableBody.length - 1]
+        .map(
+            (total) => `
+	<div style="margin-right: 1rem;">
+		<span> <bold style="font-weight: bold;">${total.title}:</bold> ${Number(
+            total.value,
+        ).toLocaleString('es-NI', {
+            style: 'currency',
+            currency: 'NIO',
+        })}</span>
+	</div>
+		`,
+        )
+        .join('')}
     </div>
+
 	</section>
 `;
 
@@ -135,7 +136,6 @@ const multipleItemsPrintToFile = async (data: PrintToFileTypeMultiple) => {
             tableHeaders: data.tableHeaders,
             tableBody: item,
             dates: data.dates,
-            totalTitle: data.totalTitle,
         });
         html += itemHtml;
     }
