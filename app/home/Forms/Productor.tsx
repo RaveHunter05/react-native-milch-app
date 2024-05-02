@@ -1,4 +1,13 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    ScrollView,
+    Text,
+    StyleSheet,
+    Image,
+    ImageBackground,
+    TouchableOpacity,
+    View,
+    Alert,
+} from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +16,9 @@ import { AxiosResponse } from 'axios';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { ProducerType, producerApi } from '../../../src/services/producer';
 import useTable from '~/services/hooks/useTable';
+import { useEffect, useState } from 'react';
+
+import dayjs from 'dayjs';
 
 export default function Colectados() {
     const ProducerSchema = Yup.object().shape({
@@ -18,6 +30,8 @@ export default function Colectados() {
     const { MyTableComponent, setRefresh, refresh } = useTable<ProducerType>(
         producerApi.getProducers,
     );
+
+    const [producers, setProducers] = useState<ProducerType[]>([]);
 
     const createProducer = async ({
         name,
@@ -39,6 +53,7 @@ export default function Colectados() {
                     icon: 'success',
                     type: 'success',
                 });
+		Alert.alert('Enhorabuena', 'Productor creado exitosamente.')
             }
         } catch (error) {
             showMessage({
@@ -50,6 +65,15 @@ export default function Colectados() {
             console.log(error);
         }
     };
+    useEffect(() => {
+        const fetchProducers = async () => {
+            const response = await producerApi.getProducers();
+
+            setProducers(response.data);
+        };
+
+        fetchProducers();
+    }, []);
     return (
         <>
             <FlashMessage style={{ position: 'fixed', top: 0 }} />
@@ -150,9 +174,58 @@ export default function Colectados() {
                         <Text className="mt-8 font-bold text-lg">
                             Lista de Productores:
                         </Text>
-                        <View className="mt-4">
-                            <MyTableComponent />
-                        </View>
+                        <ScrollView>
+                            {producers.map((producer) => (
+                                <View
+                                    className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
+                                    style={{ borderRadius: 24 }}
+                                >
+                                    <View className="flex mr-6">
+                                        <View
+                                            className="border py-3 bg-orange-300"
+                                            style={{ borderRadius: 24 }}
+                                        >
+                                            <Image
+                                                source={{
+                                                    uri: 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/producer.png',
+                                                }}
+                                                style={{
+                                                    width: 90,
+                                                    height: 90,
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View className="">
+                                        <Text className="font-bold">
+                                            {producer.name}
+                                        </Text>
+                                        <Text className="text-gray-500 text-xs mt-1">
+                                            {dayjs(producer.date).format(
+                                                'DD/MM/YYYY',
+                                            )}
+                                        </Text>
+
+                                        <View className="mt-4">
+                                            <Text>Teléfono:</Text>
+                                            {producer.phone ? (
+                                                <Text
+                                                    className="text-blue-300"
+                                                    selectable={true}
+                                                >
+                                                    {producer.phone}
+                                                </Text>
+                                            ) : (
+                                                <Text className="text-red-500">
+                                                    No se agregó teléfono
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </View>
+                                </View>
+                            ))}
+                        </ScrollView>
                     </View>
                 </ScrollView>
             </ScrollView>

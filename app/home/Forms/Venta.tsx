@@ -1,4 +1,4 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -70,6 +70,10 @@ export default function Venta() {
                     icon: 'success',
                     type: 'success',
                 });
+                Alert.alert(
+                    'Enhorabuena!',
+                    'Venta de leche creada exitosamente',
+                );
             }
         } catch (error) {
             showMessage({

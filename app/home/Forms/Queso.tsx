@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +7,8 @@ import { AxiosResponse } from 'axios';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import useTable from '~/services/hooks/useTable';
 import { CheeseMakerType, cheeseMakersApi } from '~/services/cheese_maker';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 export default function Queso() {
     const TransportCostSchema = Yup.object().shape({
@@ -20,6 +22,8 @@ export default function Queso() {
     const { MyTableComponent, setRefresh, refresh } = useTable<CheeseMakerType>(
         cheeseMakersApi.getCheeseMakers,
     );
+
+    const [cheeseMakers, setCheeseMakers] = useState<CheeseMakerType[]>([]);
 
     const createCheeseMaker = async ({
         name,
@@ -42,6 +46,7 @@ export default function Queso() {
                     icon: 'success',
                     type: 'success',
                 });
+		Alert.alert('Enhorabuena!', 'Quesero creado exitosamente');
             }
         } catch (error) {
             showMessage({
@@ -53,6 +58,15 @@ export default function Queso() {
             console.log(error);
         }
     };
+
+    useEffect(() => {
+        const fetchCheeseMakers = async () => {
+            const response: AxiosResponse =
+                await cheeseMakersApi.getCheeseMakers();
+            setCheeseMakers(response.data);
+        };
+        fetchCheeseMakers();
+    }, []);
     return (
         <ScrollView style={{ backgroundColor: '#74B7FD' }}>
             <FlashMessage style={{ position: 'fixed', top: 0 }} />
@@ -146,8 +160,57 @@ export default function Queso() {
                     <Text className="mt-8 font-bold text-lg">
                         Lista de Queseros:
                     </Text>
-                    <ScrollView className="mt-4">
-                        <MyTableComponent />
+                    <ScrollView>
+                        {cheeseMakers.map((cheeseMaker) => (
+                            <View
+                                className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
+                                style={{ borderRadius: 24 }}
+                            >
+                                <View className="flex mr-6">
+                                    <View
+                                        className="border py-3 bg-orange-300"
+                                        style={{ borderRadius: 24 }}
+                                    >
+                                        <Image
+                                            source={{
+                                                uri: 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/cheese.png',
+                                            }}
+                                            style={{
+                                                width: 90,
+                                                height: 90,
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View className="">
+                                    <Text className="font-bold">
+                                        {cheeseMaker.name}
+                                    </Text>
+                                    <Text className="text-gray-500 text-xs mt-1">
+                                        {dayjs(cheeseMaker.date).format(
+                                            'DD/MM/YYYY',
+                                        )}
+                                    </Text>
+
+                                    <View className="mt-4">
+                                        <Text>Teléfono:</Text>
+                                        {cheeseMaker.phone ? (
+                                            <Text
+                                                className="text-blue-300"
+                                                selectable={true}
+                                            >
+                                                {cheeseMaker.phone}
+                                            </Text>
+                                        ) : (
+                                            <Text className="text-red-500">
+                                                No se agregó teléfono
+                                            </Text>
+                                        )}
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
                     </ScrollView>
                 </View>
             </ScrollView>

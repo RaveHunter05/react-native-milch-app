@@ -1,4 +1,11 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    Image,
+    View,
+    Alert,
+} from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -8,6 +15,8 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { DriverType, driverApi } from '~/services/driver';
 
 import useTable from '~/services/hooks/useTable';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 export default function Conductor() {
     const DriverSchema = Yup.object().shape({
@@ -18,6 +27,8 @@ export default function Conductor() {
     const { MyTableComponent, setRefresh, refresh } = useTable<DriverType>(
         driverApi.getDrivers,
     );
+
+    const [drivers, setDrivers] = useState<DriverType[]>([]);
 
     const createDriver = async ({ name, phone }: DriverType) => {
         try {
@@ -34,6 +45,7 @@ export default function Conductor() {
                     icon: 'success',
                     type: 'success',
                 });
+                Alert.alert('Enhorabuena!', 'Conductor creado exitosamente');
             }
         } catch (error) {
             showMessage({
@@ -45,6 +57,14 @@ export default function Conductor() {
             console.log(error);
         }
     };
+
+    useEffect(() => {
+        const fetchDrivers = async () => {
+            const response: AxiosResponse = await driverApi.getDrivers();
+            setDrivers(response.data);
+        };
+        fetchDrivers();
+    }, []);
 
     return (
         <ScrollView style={{ backgroundColor: '#74B7FD' }}>
@@ -120,8 +140,57 @@ export default function Conductor() {
                     <Text className="mt-8 font-bold text-lg">
                         Lista de conductores:
                     </Text>
-                    <ScrollView className="mt-4">
-                        <MyTableComponent />
+                    <ScrollView>
+                        {drivers.map((driver) => (
+                            <View
+                                className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
+                                style={{ borderRadius: 24 }}
+                            >
+                                <View className="flex mr-6">
+                                    <View
+                                        className="border py-3 bg-orange-300"
+                                        style={{ borderRadius: 24 }}
+                                    >
+                                        <Image
+                                            source={{
+                                                uri: 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/driver.png',
+                                            }}
+                                            style={{
+                                                width: 90,
+                                                height: 90,
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View className="">
+                                    <Text className="font-bold">
+                                        {driver.name}
+                                    </Text>
+                                    <Text className="text-gray-500 text-xs mt-1">
+                                        {dayjs(driver.date).format(
+                                            'DD/MM/YYYY',
+                                        )}
+                                    </Text>
+
+                                    <View className="mt-4">
+                                        <Text>Teléfono:</Text>
+                                        {driver.phone ? (
+                                            <Text
+                                                className="text-blue-300"
+                                                selectable={true}
+                                            >
+                                                {driver.phone}
+                                            </Text>
+                                        ) : (
+                                            <Text className="text-red-500">
+                                                No se agregó teléfono
+                                            </Text>
+                                        )}
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
                     </ScrollView>
                 </View>
             </ScrollView>

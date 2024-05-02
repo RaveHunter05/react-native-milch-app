@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Image,
     ImageBackground,
+    Alert
 } from 'react-native';
 
 import { Formik } from 'formik';
@@ -84,6 +85,8 @@ export default function Transporte() {
                     icon: 'success',
                     type: 'success',
                 });
+
+                Alert.alert('Enhorabuena', 'Colecta de leche creada exitosamente.');
             }
         } catch (error) {
             showMessage({
@@ -300,7 +303,7 @@ export default function Transporte() {
                     </Formik>
                     <View>
                         <Text className="mt-8 font-bold text-lg">
-                            Lista de Colectado:
+                            Lista de leche colectada:
                         </Text>
                         <ScrollView>
                             {milkCollects.map((collect) => (

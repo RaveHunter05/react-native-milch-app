@@ -6,7 +6,7 @@ export default function Registros() {
         <ScrollView>
             <View className="p-4 h-full" style={{ backgroundColor: '#74B7FD' }}>
                 <Text className="mb-4 font-bold text-lg">
-                    Elije el registro que deseas hacer
+                    Elige el registro que deseas hacer
                 </Text>
 
                 <View className="flex flex-row flex-wrap mt-4 justify-center">
@@ -14,7 +14,7 @@ export default function Registros() {
                         route="/home/Forms/Colectados"
                         imageURI="https://services-project.s3.us-east-2.amazonaws.com/icons-milch/milch.png"
                     >
-                        <Text>Colectado</Text>
+                        <Text>Leche colectada</Text>
                     </MyCards>
                     <MyCards
                         route="home/Forms/Pagos"
