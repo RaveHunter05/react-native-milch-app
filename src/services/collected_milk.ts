@@ -11,7 +11,6 @@ export type MilkCollectType = {
     price: number;
     quantity: number;
     name: string;
-    type: string;
     date: string;
 };
 
@@ -20,7 +19,6 @@ const token = getToken();
 const createMilkCollect = async ({
     name,
     quantity,
-    type,
     price,
     driver_id,
     route_id,
@@ -32,7 +30,6 @@ const createMilkCollect = async ({
         {
             name,
             quantity,
-            type,
             price,
             driver_id,
             route_id,

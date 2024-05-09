@@ -6,7 +6,7 @@ import {
     StyleSheet,
     Image,
     ImageBackground,
-    Alert
+    Alert,
 } from 'react-native';
 
 import { Formik } from 'formik';
@@ -28,9 +28,6 @@ export default function Transporte() {
         quantity: Yup.number().required(
             'Cantidad de leche colectada es requerida',
         ),
-        type: Yup.string().required(
-            'Tipo de leche es requerido (litros, galones, etc)',
-        ),
         price: Yup.number().required('El precio de la leche es requerido'),
         driver_id: Yup.string().required('Productor es requerido'),
         route_id: Yup.string().required('Ruta es requerida'),
@@ -50,7 +47,6 @@ export default function Transporte() {
     const createMilkCollect = async ({
         name,
         quantity,
-        type,
         price,
         driver_id,
         route_id,
@@ -60,7 +56,6 @@ export default function Transporte() {
             console.log({
                 name,
                 quantity,
-                type,
                 price,
                 driver_id,
                 route_id,
@@ -70,7 +65,6 @@ export default function Transporte() {
                 await milkCollectApi.createMilkCollect({
                     name,
                     quantity,
-                    type,
                     price,
                     driver_id,
                     route_id,
@@ -86,7 +80,10 @@ export default function Transporte() {
                     type: 'success',
                 });
 
-                Alert.alert('Enhorabuena', 'Colecta de leche creada exitosamente.');
+                Alert.alert(
+                    'Enhorabuena',
+                    'Colecta de leche creada exitosamente.',
+                );
             }
         } catch (error) {
             showMessage({
@@ -162,7 +159,6 @@ export default function Transporte() {
                         initialValues={{
                             name: '',
                             quantity: 0,
-                            type: 'litros',
                             price: 0,
                             driver_id: '0',
                             route_id: '',
@@ -211,24 +207,6 @@ export default function Transporte() {
                                     {errors.quantity && touched.quantity && (
                                         <Text className="text-red-500 text-xs mt-1">
                                             {errors.quantity}
-                                        </Text>
-                                    )}
-                                </View>
-                                <View>
-                                    <Text className="mb-2 text-base">Tipo</Text>
-                                    <Picker
-                                        className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                        onValueChange={handleChange('type')}
-                                        onBlur={handleBlur('type')}
-                                        items={[
-                                            { label: 'Litro', value: 'litro' },
-                                            { label: 'Galón', value: 'galon' },
-                                        ]}
-                                        value={values.type}
-                                    />
-                                    {errors.type && touched.type && (
-                                        <Text className="text-red-500 text-xs mt-1">
-                                            {errors.type}
                                         </Text>
                                     )}
                                 </View>

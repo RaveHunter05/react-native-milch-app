@@ -16,7 +16,6 @@ import { MilkCollectType, milkCollectApi } from '~/services/collected_milk';
 import { useEffect, useState } from 'react';
 import useTable from '~/services/hooks/useTable';
 import { MilkReportType, PaymentType, paymentApi } from '~/services/payment';
-import { TransportCostType, transportCostApi } from '~/services/transportCost';
 import { DeductionType, deductionApi } from '~/services/deductions';
 import dayjs from 'dayjs';
 
@@ -26,7 +25,6 @@ export default function Pagos() {
             'Colecta de leche es requerida',
         ),
         deduction_id: Yup.string().nullable(),
-        transport_cost_id: Yup.string().nullable(),
     });
 
     const { setRefresh, refresh } = useTable<PaymentType>(
@@ -35,32 +33,24 @@ export default function Pagos() {
 
     const [collectedMilk, setCollectedMilk] = useState([]);
     const [deductions, setDeductions] = useState([]);
-    const [transportCosts, setTransportCosts] = useState([]);
     const [payments, setPayments] = useState<MilkReportType[]>([]);
 
     const [collectedMilkPrice, setCollectedMilkPrice] = useState(0);
     const [deductionPrice, setDeductionPrice] = useState(0);
-    const [transportCostPrice, setTransportCostPrice] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
-        setTotalAmount(
-            Number(collectedMilkPrice) -
-                Number(deductionPrice) +
-                Number(transportCostPrice),
-        );
-    }, [collectedMilkPrice, deductionPrice, transportCostPrice]);
+        setTotalAmount(Number(collectedMilkPrice) - Number(deductionPrice));
+    }, [collectedMilkPrice, deductionPrice]);
 
     const createPayment = async ({
         collected_milk_id,
         deduction_id,
-        transport_cost_id,
     }: PaymentType) => {
         try {
             console.log({
                 collected_milk_id,
                 deduction_id,
-                transport_cost_id,
                 totalAmount,
             });
             if (collected_milk_id === '0') {
@@ -75,7 +65,6 @@ export default function Pagos() {
             const response: AxiosResponse = await paymentApi.createPayment({
                 collected_milk_id,
                 deduction_id,
-                transport_cost_id,
                 total_amount: totalAmount,
             });
 
@@ -130,20 +119,6 @@ export default function Pagos() {
                 setDeductions(formatedDeductions);
             };
 
-            const fetchTransportCosts = async () => {
-                const response = await transportCostApi.getTransportCosts();
-                const formatedTransportCosts = response.data.map(
-                    (transportCost: TransportCostType) => {
-                        return {
-                            label: transportCost.name,
-                            value: transportCost.id.toString(),
-                            price: transportCost.cost,
-                        };
-                    },
-                );
-                setTransportCosts(formatedTransportCosts);
-            };
-
             const fetchPayments = async () => {
                 const response = await paymentApi.getLastPaymentsReport();
                 setPayments(response.data);
@@ -153,7 +128,6 @@ export default function Pagos() {
 
             fetchCollectedMilk();
             fetchDeductions();
-            fetchTransportCosts();
         } catch (error) {
             console.log(error);
         }
@@ -172,7 +146,6 @@ export default function Pagos() {
                             initialValues={{
                                 collected_milk_id: '',
                                 deduction_id: null,
-                                transport_cost_id: null,
                             }}
                             onSubmit={createPayment}
                             validationSchema={CollectablSchema}
@@ -262,48 +235,7 @@ export default function Pagos() {
 
                                     <View>
                                         <Text className="text-base mb-2">
-                                            Seleccione un costo de transporte
-                                            (de existir)
-                                        </Text>
-                                        <Picker
-                                            className="border border-dotted p-2 text-gray-500 border-amber-400 mt-1"
-                                            onValueChange={(val) => {
-                                                let transportCostPrice =
-                                                    transportCosts.filter(
-                                                        (x) => x.value === val,
-                                                    )[0];
-                                                setTransportCostPrice(
-                                                    transportCostPrice.price,
-                                                );
-
-                                                values.transport_cost_id = val;
-                                            }}
-                                            onBlur={handleBlur(
-                                                'transport_cost_id',
-                                            )}
-                                            items={transportCosts}
-                                            value={values.transport_cost_id}
-                                        />
-                                        {errors.transport_cost_id &&
-                                            touched.transport_cost_id && (
-                                                <Text className="text-red-500 text-xs mt-1">
-                                                    {errors.transport_cost_id}
-                                                </Text>
-                                            )}
-                                        <Text className="text-base mt-1">
-                                            {Number(
-                                                transportCostPrice,
-                                            ).toLocaleString('es-NI', {
-                                                style: 'currency',
-                                                currency: 'NIO',
-                                            })}
-                                        </Text>
-                                    </View>
-
-                                    <View>
-                                        <Text className="text-base mb-2">
-                                            Monto (colecta - deducción + costo
-                                            de transporte)
+                                            Monto (colecta - deducción)
                                         </Text>
                                         <Text className="mt-1">
                                             {Number(totalAmount).toLocaleString(

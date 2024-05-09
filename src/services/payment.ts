@@ -7,7 +7,6 @@ import { getToken } from '../helpers/secureStore';
 export type PaymentType = {
     collected_milk_id: string;
     deduction_id?: string;
-    transport_cost_id?: string;
     total_amount: number;
 };
 
@@ -24,7 +23,6 @@ const token = getToken();
 const createPayment = async ({
     collected_milk_id,
     deduction_id,
-    transport_cost_id,
     total_amount,
 }: PaymentType): Promise<AxiosResponse> => {
     const date = dayjs(new Date()).format('YYYY-MM-DD');
@@ -33,7 +31,6 @@ const createPayment = async ({
         {
             collected_milk_id,
             deduction_id,
-            transport_cost_id,
             total_amount,
             date,
         },
