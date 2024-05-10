@@ -5,6 +5,7 @@ import {
     Image,
     View,
     Alert,
+    Pressable,
 } from 'react-native';
 
 import { Formik } from 'formik';
@@ -17,6 +18,7 @@ import { DriverType, driverApi } from '~/services/driver';
 import useTable from '~/services/hooks/useTable';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function Conductor() {
     const DriverSchema = Yup.object().shape({
@@ -29,6 +31,47 @@ export default function Conductor() {
     );
 
     const [drivers, setDrivers] = useState<DriverType[]>([]);
+
+    const handleDeleteDriver = async (id: number) => {
+        const deleteDriver = async (id: number) => {
+            try {
+                const response: AxiosResponse =
+                    await driverApi.deleteDriver(id);
+                showMessage({
+                    message: 'Enhorabuena!',
+                    description: 'Conductor eliminado exitosamente',
+                    icon: 'success',
+                    type: 'success',
+                });
+                Alert.alert('Enhorabuena!', 'Conductor eliminado exitosamente');
+                setRefresh(!refresh);
+                return response;
+            } catch (error) {
+                showMessage({
+                    message: 'Error :(',
+                    description: 'No se pudo eliminar el conductor.',
+                    icon: 'danger',
+                    type: 'danger',
+                });
+                console.log(error);
+            }
+        };
+
+        Alert.alert(
+            'Eliminar Conductor',
+            '¿Estás seguro de eliminar este conductor?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Eliminar',
+                    onPress: () => deleteDriver(id),
+                },
+            ],
+        );
+    };
 
     const createDriver = async ({ name, phone }: DriverType) => {
         try {
@@ -64,7 +107,7 @@ export default function Conductor() {
             setDrivers(response.data);
         };
         fetchDrivers();
-    }, []);
+    }, [refresh]);
 
     return (
         <ScrollView style={{ backgroundColor: '#74B7FD' }}>
@@ -141,10 +184,11 @@ export default function Conductor() {
                         Lista de conductores:
                     </Text>
                     <ScrollView>
-                        {drivers.map((driver) => (
+                        {drivers.map((driver, key) => (
                             <View
                                 className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                 style={{ borderRadius: 24 }}
+                                key={key}
                             >
                                 <View className="flex mr-6">
                                     <View
@@ -188,6 +232,20 @@ export default function Conductor() {
                                             </Text>
                                         )}
                                     </View>
+                                </View>
+
+                                <View className="ml-auto mr-3">
+                                    <Pressable
+                                        onPress={() =>
+                                            handleDeleteDriver(driver.id)
+                                        }
+                                    >
+                                        <FontAwesome
+                                            name="trash-o"
+                                            size={24}
+                                            color="red"
+                                        />
+                                    </Pressable>
                                 </View>
                             </View>
                         ))}

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { getAxios, postAxios } from '../helpers/axiosHelper';
+import { delAxios, getAxios, postAxios } from '../helpers/axiosHelper';
 
 import dayjs from 'dayjs';
 import { getToken } from '../helpers/secureStore';
@@ -44,7 +44,18 @@ const getDrivers = async (): Promise<AxiosResponse> => {
     return response;
 };
 
+const deleteDriver = async (id: number): Promise<AxiosResponse> => {
+    const response: AxiosResponse = await delAxios(`/driver/${id}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response;
+};
+
 export const driverApi = {
     createDriver,
     getDrivers,
+    deleteDriver,
 };

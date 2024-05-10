@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { getAxios, postAxios } from '../helpers/axiosHelper';
+import { delAxios, getAxios, postAxios } from '../helpers/axiosHelper';
 
 import dayjs from 'dayjs';
 import { getToken } from '../helpers/secureStore';
@@ -16,7 +16,7 @@ const token = getToken();
 const createCheeseMaker = async ({
     name,
     description,
-    phone
+    phone,
 }: CheeseMakerType): Promise<AxiosResponse> => {
     const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
@@ -24,7 +24,7 @@ const createCheeseMaker = async ({
         {
             name,
             description,
-	    phone,
+            phone,
             date,
         },
         {
@@ -47,7 +47,18 @@ const getCheeseMakers = async (): Promise<AxiosResponse> => {
     return response;
 };
 
+const deleteCheeseMaker = async (id: number): Promise<AxiosResponse> => {
+    const response: AxiosResponse = await delAxios(`/cheese_maker/${id}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response;
+};
+
 export const cheeseMakersApi = {
     createCheeseMaker,
-    getCheeseMakers
+    getCheeseMakers,
+    deleteCheeseMaker,
 };

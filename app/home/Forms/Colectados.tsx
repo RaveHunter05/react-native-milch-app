@@ -1,7 +1,6 @@
 import {
     ScrollView,
     Text,
-    TouchableOpacity,
     View,
     StyleSheet,
     Image,
@@ -21,6 +20,10 @@ import { MilkRouteType, milkRouteApi } from '~/services/route';
 import { ProducerType, producerApi } from '~/services/producer';
 import useTable from '~/services/hooks/useTable';
 import dayjs from 'dayjs';
+import useDateTimePicker from '~/services/hooks/useDateTimePicker';
+import formatDateString from '~/utils/formatDateString';
+
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Transporte() {
     const CollectablSchema = Yup.object().shape({
@@ -32,6 +35,15 @@ export default function Transporte() {
         driver_id: Yup.string().required('Productor es requerido'),
         route_id: Yup.string().required('Ruta es requerida'),
         producer_id: Yup.string().required('Productor es requerido'),
+    });
+
+    const {
+        DatePickerComponent: DatePickerComponent,
+        switchModalVisibility: switchModalVisibilityDate,
+        date: collectedDate,
+    } = useDateTimePicker({
+        mode: 'date',
+        title: 'Seleccione fecha',
     });
 
     const { MyTableComponent, setRefresh, refresh } = useTable<MilkCollectType>(
@@ -69,6 +81,7 @@ export default function Transporte() {
                     driver_id,
                     route_id,
                     producer_id,
+                    date: dayjs(collectedDate).format('YYYY-MM-DD'),
                 });
 
             if (response.status === 200) {
@@ -163,6 +176,7 @@ export default function Transporte() {
                             driver_id: '0',
                             route_id: '',
                             producer_id: '',
+                            date: dayjs(new Date()).format('YYYY-MM-DD'),
                         }}
                         onSubmit={createMilkCollect}
                         validationSchema={CollectablSchema}
@@ -266,6 +280,24 @@ export default function Transporte() {
                                         )}
                                         onBlur={handleBlur('producer_id')}
                                     />
+                                </View>
+
+                                <View>
+                                    <Text className="mb-2 text-base">
+                                        Seleccione una fecha
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={switchModalVisibilityDate}
+                                    >
+                                        <TextInput
+                                            value={formatDateString(
+                                                collectedDate.toString(),
+                                            )}
+                                            editable={false}
+                                        />
+                                    </TouchableOpacity>
+
+                                    <DatePickerComponent />
                                 </View>
 
                                 <TouchableOpacity

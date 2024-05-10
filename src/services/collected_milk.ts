@@ -23,8 +23,8 @@ const createMilkCollect = async ({
     driver_id,
     route_id,
     producer_id,
+    date,
 }: MilkCollectType): Promise<AxiosResponse> => {
-    const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
         '/collected_milk',
         {

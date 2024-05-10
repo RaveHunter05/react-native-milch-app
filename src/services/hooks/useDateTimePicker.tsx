@@ -39,7 +39,7 @@ export default function useDateTimePicker<T>({
                         display="default"
                         onChange={onChange}
                         maximumDate={new Date()}
-                        style={{ width: 320, backgroundColor: 'white' }}
+                        style={{ width: 300, height: 900, backgroundColor: '#74B7FD'}}
                     />
                 </Modal>
             </View>

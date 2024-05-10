@@ -37,7 +37,7 @@ const generateHTML = async ({
     dates,
 }: PrintToFileType) => {
     const html = `
-    <section style="height: 50vh;">
+    <section style="height: 50%;">
   <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
 	<section style="flex: 1;">
 		<p style=" font-family: Helvetica Neue; font-weight: bold;">
@@ -109,17 +109,22 @@ table {
 
 table td, table th {
   border: 1px solid #000;
-  padding: 8px;
+  padding: 4px; /* Reduced padding */
+  font-size: 12px; /* Reduced font size */
   text-align: center;
 }
 
-table tr:nth-child(even){background-color: #f2f2f2;}
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-table tr:hover {background-color: #ddd;}
+table tr:hover {
+  background-color: #ddd;
+}
 
 table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 8px; /* Reduced padding */
+  padding-bottom: 8px; /* Reduced padding */
   text-align: left;
   background-color: #74B7FD;
   color: #000;

@@ -1,4 +1,12 @@
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +17,7 @@ import useTable from '~/services/hooks/useTable';
 import { CheeseMakerType, cheeseMakersApi } from '~/services/cheese_maker';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function Queso() {
     const TransportCostSchema = Yup.object().shape({
@@ -24,6 +33,40 @@ export default function Queso() {
     );
 
     const [cheeseMakers, setCheeseMakers] = useState<CheeseMakerType[]>([]);
+
+    const handleDeleteCheeseMaker = async (id: number) => {
+        const deleteCheeseMaker = async (id: number) => {
+            try {
+                const response = await cheeseMakersApi.deleteCheeseMaker(id);
+                Alert.alert('Enhorabuena!', 'Quesero eliminado exitosamente');
+                setRefresh(!refresh);
+                return response;
+            } catch (error) {
+                showMessage({
+                    message: 'Error :(',
+                    description: 'No se pudo eliminar el quesero.',
+                    icon: 'danger',
+                    type: 'danger',
+                });
+                console.log(error);
+            }
+        };
+
+        Alert.alert(
+            'Eliminar quesero',
+            '¿Estás seguro de eliminar este quesero?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Eliminar',
+                    onPress: () => deleteCheeseMaker(id),
+                },
+            ],
+        );
+    };
 
     const createCheeseMaker = async ({
         name,
@@ -46,7 +89,7 @@ export default function Queso() {
                     icon: 'success',
                     type: 'success',
                 });
-		Alert.alert('Enhorabuena!', 'Quesero creado exitosamente');
+                Alert.alert('Enhorabuena!', 'Quesero creado exitosamente');
             }
         } catch (error) {
             showMessage({
@@ -66,7 +109,7 @@ export default function Queso() {
             setCheeseMakers(response.data);
         };
         fetchCheeseMakers();
-    }, []);
+    }, [refresh]);
     return (
         <ScrollView style={{ backgroundColor: '#74B7FD' }}>
             <FlashMessage style={{ position: 'fixed', top: 0 }} />
@@ -161,10 +204,11 @@ export default function Queso() {
                         Lista de Queseros:
                     </Text>
                     <ScrollView>
-                        {cheeseMakers.map((cheeseMaker) => (
+                        {cheeseMakers.map((cheeseMaker, key) => (
                             <View
                                 className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                 style={{ borderRadius: 24 }}
+                                key={key}
                             >
                                 <View className="flex mr-6">
                                     <View
@@ -208,6 +252,22 @@ export default function Queso() {
                                             </Text>
                                         )}
                                     </View>
+                                </View>
+
+                                <View className="ml-auto mr-3">
+                                    <Pressable
+                                        onPress={() =>
+                                            handleDeleteCheeseMaker(
+                                                cheeseMaker.id,
+                                            )
+                                        }
+                                    >
+                                        <FontAwesome
+                                            name="trash-o"
+                                            size={24}
+                                            color="red"
+                                        />
+                                    </Pressable>
                                 </View>
                             </View>
                         ))}

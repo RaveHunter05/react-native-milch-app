@@ -1,13 +1,15 @@
 import {
     ScrollView,
     Text,
-    StyleSheet,
     Image,
-    ImageBackground,
     TouchableOpacity,
     View,
     Alert,
+    Pressable,
+    Modal,
 } from 'react-native';
+
+import { FontAwesome } from '@expo/vector-icons';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -33,6 +35,43 @@ export default function Colectados() {
 
     const [producers, setProducers] = useState<ProducerType[]>([]);
 
+    const handleDeleteProducer = async (id: number) => {
+        const deleteProducer = async (id: number) => {
+            try {
+                const response = await producerApi.deleteProducer(id);
+                Alert.alert('Productor eliminado exitosamente');
+                setRefresh(!refresh);
+                return response;
+            } catch (error) {
+                Alert.alert('Error', 'No se pudo eliminar el productor.');
+                console.log(error);
+            }
+        };
+        if (id) {
+            Alert.alert(
+                'Eliminar',
+                '¿Estás seguro de eliminar este productor?',
+                [
+                    {
+                        text: 'Cancelar',
+                        onPress: () => Alert.alert('Cancelado'),
+                    },
+                    { text: 'Eliminar', onPress: () => deleteProducer(id) },
+                ],
+            );
+            return;
+        }
+
+        showMessage({
+            message: 'Error :(',
+            description: 'No se pudo eliminar el productor.',
+            icon: 'danger',
+            type: 'danger',
+        });
+        Alert.alert('Error', 'No se pudo eliminar el productor.');
+        return;
+    };
+
     const createProducer = async ({
         name,
         description,
@@ -53,7 +92,7 @@ export default function Colectados() {
                     icon: 'success',
                     type: 'success',
                 });
-		Alert.alert('Enhorabuena', 'Productor creado exitosamente.')
+                Alert.alert('Enhorabuena', 'Productor creado exitosamente.');
             }
         } catch (error) {
             showMessage({
@@ -65,6 +104,7 @@ export default function Colectados() {
             console.log(error);
         }
     };
+
     useEffect(() => {
         const fetchProducers = async () => {
             const response = await producerApi.getProducers();
@@ -73,7 +113,7 @@ export default function Colectados() {
         };
 
         fetchProducers();
-    }, []);
+    }, [refresh]);
     return (
         <>
             <FlashMessage style={{ position: 'fixed', top: 0 }} />
@@ -175,10 +215,11 @@ export default function Colectados() {
                             Lista de Productores:
                         </Text>
                         <ScrollView>
-                            {producers.map((producer) => (
+                            {producers.map((producer, key) => (
                                 <View
                                     className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                     style={{ borderRadius: 24 }}
+                                    key={key}
                                 >
                                     <View className="flex mr-6">
                                         <View
@@ -222,6 +263,22 @@ export default function Colectados() {
                                                 </Text>
                                             )}
                                         </View>
+                                    </View>
+
+                                    <View className="ml-auto mr-3">
+                                        <Pressable
+                                            onPress={() =>
+                                                handleDeleteProducer(
+                                                    producer.id,
+                                                )
+                                            }
+                                        >
+                                            <FontAwesome
+                                                name="trash-o"
+                                                size={24}
+                                                color="red"
+                                            />
+                                        </Pressable>
                                     </View>
                                 </View>
                             ))}

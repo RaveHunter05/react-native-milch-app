@@ -264,10 +264,11 @@ export default function Pagos() {
                         </Text>
 
                         <ScrollView>
-                            {payments.map((payment) => (
+                            {payments.map((payment, key) => (
                                 <View
                                     className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                     style={{ borderRadius: 24 }}
+				    key={key}
                                 >
                                     <View className="flex mr-6">
                                         <View

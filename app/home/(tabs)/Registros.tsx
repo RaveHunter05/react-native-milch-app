@@ -4,7 +4,7 @@ import MyCards from '~/components/shared/MyCards';
 export default function Registros() {
     return (
         <ScrollView>
-            <View className="p-4 h-full" style={{ backgroundColor: '#74B7FD' }}>
+            <View className="p-4 h-screen" style={{ backgroundColor: '#74B7FD' }}>
                 <Text className="mb-4 font-bold text-lg">
                     Elige el registro que deseas hacer
                 </Text>

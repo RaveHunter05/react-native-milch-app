@@ -1,4 +1,11 @@
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    Alert,
+    Image,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -27,6 +34,15 @@ export default function Venta() {
     const [milkSells, setMilkSells] = useState<MilkSelledType[]>([]);
 
     useEffect(() => {
+        const fetchMilkSells = async () => {
+            const sells = await milkSellApi.getMilkSells();
+            setMilkSells(sells.data);
+        };
+
+        fetchMilkSells();
+    }, []);
+
+    useEffect(() => {
         const fetchCheeseMakers = async () => {
             const response: AxiosResponse =
                 await cheeseMakersApi.getCheeseMakers();
@@ -41,14 +57,8 @@ export default function Venta() {
             setCheeseMakers(formatedCheeseMakers);
         };
 
-        const fetchMilkSells = async () => {
-            const sells = await milkSellApi.getMilkSells();
-            setMilkSells(sells.data);
-        };
-
-        fetchMilkSells();
         fetchCheeseMakers();
-    }, []);
+    }, [refresh]);
 
     const createCheeseMaker = async ({
         quantity,
@@ -177,10 +187,11 @@ export default function Venta() {
                         Lista de Venta de leche:
                     </Text>
                     <ScrollView>
-                        {milkSells.map((sell) => (
+                        {milkSells.map((sell, key) => (
                             <View
                                 className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                 style={{ borderRadius: 24 }}
+                                key={key}
                             >
                                 <View className="flex mr-6">
                                     <View

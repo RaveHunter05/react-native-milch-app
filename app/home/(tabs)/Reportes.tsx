@@ -1,4 +1,8 @@
-import { Text, View, Modal, Pressable, ScrollView } from 'react-native';
+import { Text, View, Pressable, ScrollView, Alert } from 'react-native';
+
+import { authApi } from '@/services/auth';
+
+const { logout } = authApi;
 
 import MyReport from '~/components/shared/MyReport';
 import useDateTimePicker from '~/services/hooks/useDateTimePicker';
@@ -10,6 +14,11 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 import printToFile from '~/utils/toPDF';
 import dayjs from 'dayjs';
 import multipleItemsPrintToFile from '~/utils/multipleItemsPDF';
+
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+import { router } from 'expo-router';
 
 export default function Reportes() {
     const {
@@ -29,6 +38,17 @@ export default function Reportes() {
         mode: 'date',
         title: 'Seleccione fecha final',
     });
+
+    const handleLogout = () => {
+        logout();
+        Alert.alert('Logout', 'Has cerrado sesión');
+        showMessage({
+            message: 'Logout',
+            description: 'Has cerrado sesión',
+            type: 'success',
+        });
+        router.replace('/');
+    };
 
     const handleCollectedMilkByProducerAndDate = async () => {
         if (initialDate > finalDate) {
@@ -475,7 +495,22 @@ export default function Reportes() {
             return;
         }
 
+        if (dayjs(finalDate).diff(initialDate, 'days') > 7) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La diferencia de fechas para reportes no puede ser mayor a 7 días',
+                type: 'danger',
+            });
+            return;
+        }
+
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando reporte...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getPaymentReportByProducerAndDate(
                     initialDate,
@@ -490,7 +525,7 @@ export default function Reportes() {
                 return;
             }
 
-            const title = 'Reporte de pagos a productor por fecha';
+            const title = 'Reporte de pagos a productor';
             const tableHeaders = [
                 'Fecha',
                 'Día de semana',
@@ -588,7 +623,22 @@ export default function Reportes() {
             return;
         }
 
+        if (dayjs(finalDate).diff(initialDate, 'days') > 7) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La diferencia de fechas para reportes no puede ser mayor a 7 días',
+                type: 'danger',
+            });
+            return;
+        }
+
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando reporte...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getCollectedMilkReportByRouteAndDate(
                     initialDate,
@@ -686,7 +736,22 @@ export default function Reportes() {
             return;
         }
 
+        if (dayjs(finalDate).diff(initialDate, 'days') > 7) {
+            showMessage({
+                message: 'Error',
+                description:
+                    'La diferencia de fechas para reportes no puede ser mayor a 7 días',
+                type: 'danger',
+            });
+            return;
+        }
+
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando reporte...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getMilkSellsReportByCheeseMakerAndDate(
                     initialDate,
@@ -782,26 +847,36 @@ export default function Reportes() {
                     <View>
                         <Text className="mb-2 text-base">Fecha inicial</Text>
 
-                        <Pressable onPress={switchModalVisibilityInitialDate}>
+                        <TouchableOpacity
+                            onPress={switchModalVisibilityInitialDate}
+                        >
                             <TextInput
                                 value={formatDateString(initialDate.toString())}
                                 editable={false}
                             />
-                        </Pressable>
+                        </TouchableOpacity>
 
                         <InitialDatePickerComponent />
                     </View>
                     <View>
                         <Text className="mb-2 text-base">Fecha Final</Text>
 
-                        <Pressable onPress={switchModalVisibilityFinalDate}>
+                        <TouchableOpacity
+                            onPress={switchModalVisibilityFinalDate}
+                        >
                             <TextInput
                                 value={formatDateString(finalDate.toString())}
                                 editable={false}
                             />
-                        </Pressable>
+                        </TouchableOpacity>
 
                         <FinalDatePickerComponent />
+
+                        <Text className="mt-6 text-red-500">
+                            <AntDesign name="warning" size={24} />
+                            (Para reportes la diferencia de fechas no debe
+                            superar 7 días)
+                        </Text>
                     </View>
 
                     <ScrollView>
@@ -855,6 +930,22 @@ export default function Reportes() {
                             onPress={handleMilkSellsReportByCheeseMakerAndDate}
                         >
                             <MyReport>Reporte de ventas por quesero</MyReport>
+                        </Pressable>
+
+                        <Pressable onPress={handleLogout}>
+                            <View className="px-5 bg-orange-300 py-2 font-medium border border-b-4 border-r-4 border-black rounded-lg shadow-lg hover:shadow-sm mb-3 flex flex-row justify-center items-center font-bold">
+                                <AntDesign
+                                    name="logout"
+                                    size={24}
+                                    color="black"
+                                    style={{ marginRight: 10 }}
+                                />
+                                <Text
+                                    style={{ fontSize: 16, fontWeight: 'bold' }}
+                                >
+                                    Logout
+                                </Text>
+                            </View>
                         </Pressable>
                     </ScrollView>
                 </ScrollView>
