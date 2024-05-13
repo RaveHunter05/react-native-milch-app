@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { getAxios, postAxios } from '../helpers/axiosHelper';
+import { delAxios, getAxios, postAxios } from '../helpers/axiosHelper';
 
 import dayjs from 'dayjs';
 import { getToken } from '../helpers/secureStore';
@@ -47,7 +47,18 @@ const getDeductions = async (): Promise<AxiosResponse> => {
     return response;
 };
 
+const deleteDeduction = async (id: number): Promise<AxiosResponse> => {
+    const response: AxiosResponse = await delAxios(`/deduction/${id}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response;
+};
+
 export const deductionApi = {
     createDeduction,
     getDeductions,
+    deleteDeduction,
 };

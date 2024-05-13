@@ -62,6 +62,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando resumen...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getCollectedReportByProducerAndDate(
                     initialDate,
@@ -110,6 +115,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando resumen...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getCollectedReportByDate(
                     initialDate,
@@ -201,6 +211,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando resumen...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getCollectedReportByRouteAndDate(
                     initialDate,
@@ -249,6 +264,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando reporte...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getCollectedReportByRouteDriverAndDate(
                     initialDate,
@@ -298,6 +318,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando resumen...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getSelledMilkReportByDate(
                     initialDate,
@@ -388,6 +413,11 @@ export default function Reportes() {
         }
 
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Generando reporte...',
+                type: 'info',
+            });
             const response: AxiosResponse =
                 await reportsApi.getSelledVSCollectedMilkReportByDate(
                     initialDate,
@@ -909,8 +939,7 @@ export default function Reportes() {
                             </MyReport>
                         </Pressable>
                         <Pressable
-                            onPress={handleSelledVSCollectedMilkReportByDate}
-                        >
+                            onPress={handleSelledVSCollectedMilkReportByDate} >
                             <MyReport>
                                 Resumen de comparativos de venta y acopio de
                                 leche (interno)

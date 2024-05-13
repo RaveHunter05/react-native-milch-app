@@ -16,6 +16,11 @@ export default function Login() {
 
     const handleSubmit = async ({ username, password }: any) => {
         try {
+            showMessage({
+                message: 'Info',
+                description: 'Validando login...',
+                type: 'info',
+            });
             const response: AxiosResponse = await authApi.login({
                 username,
                 password,
@@ -33,7 +38,7 @@ export default function Login() {
         } catch (error) {
             showMessage({
                 message: 'Error :(',
-                description: 'Usuario o contraseña incorrectos.',
+                description: error?.toString(),
                 icon: 'danger',
                 type: 'danger',
             });

@@ -97,7 +97,8 @@ export default function Pagos() {
                 const formatedCollectedMilk = response.data.map(
                     (collectedMilk: MilkCollectType) => {
                         return {
-                            label: collectedMilk.name,
+                            label:
+                                collectedMilk.name + ' - ' + dayjs(collectedMilk.date).format('DD/MM/YYYY'),
                             value: collectedMilk.id.toString(),
                             price: collectedMilk.price * collectedMilk.quantity,
                         };
@@ -268,7 +269,7 @@ export default function Pagos() {
                                 <View
                                     className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                     style={{ borderRadius: 24 }}
-				    key={key}
+                                    key={key}
                                 >
                                     <View className="flex mr-6">
                                         <View

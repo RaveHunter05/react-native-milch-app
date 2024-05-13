@@ -1,4 +1,12 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +15,9 @@ import { AxiosResponse } from 'axios';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { DeductionType, deductionApi } from '~/services/deductions';
 import useTable from '~/services/hooks/useTable';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function Deduction() {
     const DeductionSchema = Yup.object().shape({
@@ -20,6 +31,49 @@ export default function Deduction() {
     const { MyTableComponent, setRefresh, refresh } = useTable<DeductionType>(
         deductionApi.getDeductions,
     );
+
+    const [deductions, setDeductions] = useState<DeductionType[]>([]);
+
+    useEffect(() => {
+        const fetchDeductions = async () => {
+            const response: AxiosResponse = await deductionApi.getDeductions();
+            setDeductions(response.data);
+        };
+        fetchDeductions();
+    }, [refresh]);
+
+    const handleDeleteDeduction = async (id: number) => {
+        const deleteDeduction = async (id: number) => {
+            try {
+                const response: AxiosResponse =
+                    await deductionApi.deleteDeduction(id);
+                Alert.alert('Deducción eliminada exitosamente');
+                setRefresh(!refresh);
+                return response;
+            } catch (error) {
+                Alert.alert('Error al eliminar la deducción');
+                showMessage({
+                    message: 'Error :(',
+                    description: 'No se pudo eliminar la deducción.',
+                    icon: 'danger',
+                    type: 'danger',
+                });
+
+                console.log(error);
+            }
+        };
+
+        Alert.alert('¿Estás seguro de eliminar esta deducción?', '', [
+            {
+                text: 'Cancelar',
+                style: 'cancel',
+            },
+            {
+                text: 'Eliminar',
+                onPress: () => deleteDeduction(id),
+            },
+        ]);
+    };
 
     const createDeduction = async ({
         name,
@@ -147,7 +201,73 @@ export default function Deduction() {
                         Lista de deducciones:
                     </Text>
                     <ScrollView className="mt-4">
-                        <MyTableComponent />
+                        <ScrollView>
+                            {deductions.map((deduction, key) => (
+                                <View
+                                    className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
+                                    style={{ borderRadius: 24 }}
+                                    key={key}
+                                >
+                                    <View className="flex mr-6">
+                                        <View
+                                            className="border py-3 bg-orange-300"
+                                            style={{ borderRadius: 24 }}
+                                        >
+                                            <Image
+                                                source={{
+                                                    uri: 'https://services-project.s3.us-east-2.amazonaws.com/icons-milch/route.png',
+                                                }}
+                                                style={{
+                                                    width: 90,
+                                                    height: 90,
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View className="">
+                                        <Text className="font-bold">
+                                            {deduction.name}
+                                        </Text>
+                                        <Text className="text-gray-500 text-xs mt-1">
+                                            {dayjs(deduction.date).format(
+                                                'DD/MM/YYYY',
+                                            )}
+                                        </Text>
+                                        <View className="mt-4">
+                                            <Text className="text-blue-300">
+                                                {deduction.description}
+                                            </Text>
+
+                                            <Text className="text-lg font-bold">
+                                                {Number(
+                                                    deduction.price,
+                                                ).toLocaleString('es-NI', {
+                                                    style: 'currency',
+                                                    currency: 'NIO',
+                                                })}{' '}
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    <View className="ml-auto mr-3">
+                                        <Pressable
+                                            onPress={() =>
+                                                handleDeleteDeduction(
+                                                    deduction.id,
+                                                )
+                                            }
+                                        >
+                                            <FontAwesome
+                                                name="trash-o"
+                                                size={24}
+                                                color="red"
+                                            />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            ))}
+                        </ScrollView>
                     </ScrollView>
                 </View>
             </ScrollView>
