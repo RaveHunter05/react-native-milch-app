@@ -36,6 +36,9 @@ const createDriver = async ({
 
 const getDrivers = async (): Promise<AxiosResponse> => {
     const response: AxiosResponse = await getAxios('/driver', {
+        params: {
+            limit: 200,
+        },
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,

@@ -36,6 +36,9 @@ const createRoute = async ({
 
 const getRoutes = async (): Promise<AxiosResponse> => {
     const response: AxiosResponse = await getAxios('/route', {
+        params: {
+            limit: 200,
+        },
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -57,5 +60,5 @@ const deleteRoute = async (id: number): Promise<AxiosResponse> => {
 export const milkRouteApi = {
     createRoute,
     getRoutes,
-    deleteRoute
+    deleteRoute,
 };

@@ -18,6 +18,8 @@ import useTable from '~/services/hooks/useTable';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { FontAwesome } from '@expo/vector-icons';
+import useDateTimePicker from '~/services/hooks/useDateTimePicker';
+import formatDateString from '~/utils/formatDateString';
 
 export default function Deduction() {
     const DeductionSchema = Yup.object().shape({
@@ -26,6 +28,16 @@ export default function Deduction() {
             'La descripción de la deducción es requerida',
         ),
         price: Yup.number().required('El precio de la deducción es requerida'),
+        date: Yup.string(),
+    });
+
+    const {
+        DatePickerComponent: DatePickerComponent,
+        switchModalVisibility: switchModalVisibilityDate,
+        date: deductionDate,
+    } = useDateTimePicker({
+        mode: 'date',
+        title: 'Seleccione fecha',
     });
 
     const { MyTableComponent, setRefresh, refresh } = useTable<DeductionType>(
@@ -85,6 +97,7 @@ export default function Deduction() {
                 name,
                 description,
                 price,
+                date: dayjs(deductionDate).format('YYYY-MM-DD'),
             });
 
             if (response.status === 200) {
@@ -117,7 +130,12 @@ export default function Deduction() {
 
                 <View>
                     <Formik
-                        initialValues={{ name: '', description: '', price: 0 }}
+                        initialValues={{
+                            name: '',
+                            description: '',
+                            price: 0,
+                            date: dayjs(new Date()).format('YYYY-MM-DD'),
+                        }}
                         onSubmit={createDeduction}
                         validationSchema={DeductionSchema}
                     >
@@ -183,6 +201,24 @@ export default function Deduction() {
                                             {errors.price}
                                         </Text>
                                     )}
+                                </View>
+
+                                <View>
+                                    <Text className="mb-2 text-base">
+                                        Seleccione una fecha
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={switchModalVisibilityDate}
+                                    >
+                                        <TextInput
+                                            value={formatDateString(
+                                                deductionDate.toString(),
+                                            )}
+                                            editable={false}
+                                        />
+                                    </TouchableOpacity>
+
+                                    <DatePickerComponent />
                                 </View>
 
                                 <TouchableOpacity

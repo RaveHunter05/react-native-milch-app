@@ -17,8 +17,8 @@ const createMilkSell = async ({
     quantity,
     price,
     cheese_maker_id,
+    date,
 }: MilkSelledType): Promise<AxiosResponse> => {
-    const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
         '/milk_selled',
         {

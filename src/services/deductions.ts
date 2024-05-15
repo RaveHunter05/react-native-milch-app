@@ -8,7 +8,7 @@ export type DeductionType = {
     name: string;
     description: string;
     price: number;
-    id: string;
+    date: string;
 };
 
 const token = getToken();
@@ -17,8 +17,8 @@ const createDeduction = async ({
     name,
     description,
     price,
+    date,
 }: DeductionType): Promise<AxiosResponse> => {
-    const date = dayjs(new Date()).format('YYYY-MM-DD');
     const response: AxiosResponse = await postAxios(
         '/deduction',
         {

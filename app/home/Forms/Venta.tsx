@@ -17,12 +17,23 @@ import { MilkSelledType, milkSellApi } from '~/services/milk_sell';
 import { useEffect, useState } from 'react';
 import { cheeseMakersApi, CheeseMakerType } from '~/services/cheese_maker';
 import dayjs from 'dayjs';
+import useDateTimePicker from '~/services/hooks/useDateTimePicker';
+import formatDateString from '~/utils/formatDateString';
 
 export default function Venta() {
     const TransportCostSchema = Yup.object().shape({
         quantity: Yup.number().required('Cantidad de leche es requerido'),
         price: Yup.number().required('Precio de leche es requerido'),
         cheese_maker_id: Yup.string().required('Quesero es requerido'),
+    });
+
+    const {
+        DatePickerComponent: DatePickerComponent,
+        switchModalVisibility: switchModalVisibilityDate,
+        date: selledDate,
+    } = useDateTimePicker({
+        mode: 'date',
+        title: 'Seleccione fecha',
     });
 
     const { setRefresh, refresh } = useTable<MilkSelledType>(
@@ -40,7 +51,7 @@ export default function Venta() {
         };
 
         fetchMilkSells();
-    }, []);
+    }, [refresh]);
 
     useEffect(() => {
         const fetchCheeseMakers = async () => {
@@ -58,7 +69,7 @@ export default function Venta() {
         };
 
         fetchCheeseMakers();
-    }, [refresh]);
+    }, []);
 
     const createCheeseMaker = async ({
         quantity,
@@ -70,16 +81,17 @@ export default function Venta() {
                 quantity,
                 price,
                 cheese_maker_id,
+                date: dayjs(selledDate).format('YYYY-MM-DD'),
             });
-
             if (response.status === 200) {
-                setRefresh(!refresh);
                 showMessage({
                     message: 'Enhorabuena!',
                     description: 'Venta de leche creada exitosamente',
                     icon: 'success',
                     type: 'success',
                 });
+
+                setRefresh(!refresh);
                 Alert.alert(
                     'Enhorabuena!',
                     'Venta de leche creada exitosamente',
@@ -110,6 +122,7 @@ export default function Venta() {
                             quantity: 0,
                             price: 0,
                             cheese_maker_id: '',
+                            date: dayjs(new Date()).format('YYYY-MM-DD'),
                         }}
                         onSubmit={createCheeseMaker}
                         validationSchema={TransportCostSchema}
@@ -169,6 +182,24 @@ export default function Venta() {
                                         )}
                                         onBlur={handleBlur('cheese_maker_id')}
                                     />
+                                </View>
+
+                                <View>
+                                    <Text className="mb-2 text-base">
+                                        Seleccione una fecha
+                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={switchModalVisibilityDate}
+                                    >
+                                        <TextInput
+                                            value={formatDateString(
+                                                selledDate.toString(),
+                                            )}
+                                            editable={false}
+                                        />
+                                    </TouchableOpacity>
+
+                                    <DatePickerComponent />
                                 </View>
 
                                 <TouchableOpacity

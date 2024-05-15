@@ -27,7 +27,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Transporte() {
     const CollectablSchema = Yup.object().shape({
-        name: Yup.string().required('Nombre de la colecta es requerido'),
+        name: Yup.string(),
         quantity: Yup.number().required(
             'Cantidad de leche colectada es requerida',
         ),
@@ -316,10 +316,11 @@ export default function Transporte() {
                             Lista de leche colectada:
                         </Text>
                         <ScrollView>
-                            {milkCollects.map((collect) => (
+                            {milkCollects.map((collect, key) => (
                                 <View
                                     className="border-2 flex flex-row p-3 py-5 my-3 bg-white"
                                     style={{ borderRadius: 24 }}
+                                    key={key}
                                 >
                                     <View className="flex mr-6">
                                         <View

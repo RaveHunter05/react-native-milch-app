@@ -14,6 +14,18 @@ export type MilkCollectType = {
     date: string;
 };
 
+export type MilkCollectWithProducerInfo = {
+    id: string;
+    driver_id: string;
+    route_id: string;
+    producer_id: string;
+    price: number;
+    quantity: number;
+    name: string;
+    date: string;
+    producer_name: string;
+};
+
 const token = getToken();
 
 const createMilkCollect = async ({

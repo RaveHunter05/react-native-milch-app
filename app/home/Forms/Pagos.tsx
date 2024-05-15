@@ -12,7 +12,11 @@ import * as Yup from 'yup';
 import { Picker, TextInput } from 'react-native-rapi-ui';
 import { AxiosResponse } from 'axios';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
-import { MilkCollectType, milkCollectApi } from '~/services/collected_milk';
+import {
+    MilkCollectType,
+    MilkCollectWithProducerInfo,
+    milkCollectApi,
+} from '~/services/collected_milk';
 import { useEffect, useState } from 'react';
 import useTable from '~/services/hooks/useTable';
 import { MilkReportType, PaymentType, paymentApi } from '~/services/payment';
@@ -94,11 +98,14 @@ export default function Pagos() {
         try {
             const fetchCollectedMilk = async () => {
                 const response = await milkCollectApi.getMilkCollects();
+                console.log({ response: response.data });
                 const formatedCollectedMilk = response.data.map(
-                    (collectedMilk: MilkCollectType) => {
+                    (collectedMilk: MilkCollectWithProducerInfo) => {
                         return {
                             label:
-                                collectedMilk.name + ' - ' + dayjs(collectedMilk.date).format('DD/MM/YYYY'),
+                                collectedMilk.producer_name +
+                                ' - ' +
+                                dayjs(collectedMilk.date).format('DD/MM/YYYY'),
                             value: collectedMilk.id.toString(),
                             price: collectedMilk.price * collectedMilk.quantity,
                         };
@@ -111,7 +118,10 @@ export default function Pagos() {
                 const formatedDeductions = response.data.map(
                     (deduction: DeductionType) => {
                         return {
-                            label: deduction.name,
+                            label:
+                                deduction.name +
+                                ' - ' +
+                                dayjs(deduction.date).format('DD/MM/YYYY'),
                             value: deduction.id.toString(),
                             price: deduction.price,
                         };

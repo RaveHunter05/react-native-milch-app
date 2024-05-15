@@ -39,6 +39,9 @@ const createProducer = async ({
 
 const getProducers = async (): Promise<AxiosResponse> => {
     const response: AxiosResponse = await getAxios('/producer', {
+        params: {
+            limit: 200,
+        },
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
